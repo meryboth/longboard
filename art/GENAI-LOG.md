@@ -103,3 +103,49 @@ Se capturó el canvas del juego a través de un servidor temporal que servía `d
 | Imágenes de Nano Banana Pro | 40 (≈1.444 créditos) |
 | Imágenes de modelos abiertos | 12 |
 | GPU | ≈457 s (comparativa y BiRefNet) |
+
+## Ronda 5 — Personajes y tablas (22-09-2026)
+
+- **Pedido:** una pantalla para elegir rider y otra para elegir tabla. Personajes nuevos en el mismo estilo del actual, con distintos géneros e identidades. Tablas diseñadas por nosotros con ComfyUI; se descartó usar fotos de una marca real por derechos.
+- **Decisión de arquitectura:** los riders se generan **sin tabla** y la tabla se dibuja aparte. Así se suman N riders + M tablas en lugar de N × M imágenes.
+- **Personajes:**
+  - **Tomi:** el actual, sin tabla.
+  - **Killa:** mujer kolla de la Quebrada.
+  - **Ale:** persona no binaria.
+  - **Ramón:** veterano de unos 60 años.
+  - **Nia:** mujer afrolatina.
+
+  Pipeline de 4 pasos encadenados (ficha → pose neutral → carving izquierdo y derecho → BiRefNet), documentado en `art/characters/PIPELINE.md`. Workflows en `art/characters/comfyui/`, generados por `art/comfyui-riders.mjs`.
+- **Prueba antes del lote:** se generaron solo Killa y la tabla Cardonal. La identidad se mantuvo en las cuatro imágenes y la tabla se quitó bien, pero el carving casi no se diferenciaba de la pose neutral. Se reforzó el prompt ("clearly leaning the whole body… hips, shoulders and knees tilted") antes de lanzar el resto.
+- **Tablas:** Cardonal, Siete Colores, Garza, Faroles, Tejido y Cóndor. Vista inferior del deck en 9:16, con el panorama de la Quebrada como referencia de estilo y recorte con BiRefNet. Workflows en `art/boards/comfyui/`.
+- **Resultados del lote:** 9 jobs, sin fallas.
+  - **Identidad:** se mantuvo en las cuatro imágenes de cada rider: cara, pelo, ropa, colores y accesorio.
+  - **Tabla:** ninguna pose quedó con restos de tabla o ruedas.
+  - **Recortes:** BiRefNet dejó bordes limpios, incluso en el afro de Nia y las trenzas de Killa.
+  - **Tablas:** las seis respetaron forma y gráfica sin texto ni logos.
+- **Qué falló o quedó flojo:**
+  - Incluso con el prompt reforzado, el carving de los riders nuevos se inclina menos que el de Tomi: la diferencia entre izquierda y derecha se lee más en los brazos que en la cadera. Para el juego alcanza, porque el sprite además rota con la curva, pero es el primer candidato a regenerar.
+  - Una alternativa es pasar la pose de carving como única referencia de pose y la ficha como identidad, en lugar de encadenar desde la pose neutral.
+  - La tabla Cardonal tiene manchas claras en las esquinas del borde.
+- **Posproceso:**
+  - Retratos y tablas: recorte al contorno del alfa con `alphaextract,cropdetect`, más un margen de 12 px y alto de 900 px.
+  - Poses: se dejan en el cuadro completo de 848 × 1264 para que las tres compartan encuadre.
+  - Todo se exporta a WebP con calidad 88, en `dist/assets/riders/` y `dist/assets/boards/`.
+- **Costo:**
+  - Gemini: 26 imágenes de Nano Banana Pro a 1K, ≈ 35,5 créditos cada una, ≈ 923 créditos en total.
+  - GPU: ≈ 115 s por rider (4 recortes) y ≈ 23 s por tabla, en RTX Pro 6000.
+- **Integración en el juego:** el rider elegido reemplaza al sprite y la tabla aparece en 3D bajo sus pies.
+  - **Deck:** usa la imagen generada como textura recortada por su alfa, con grip transparente, canto de madera y medidas reales.
+  - **Ruedas:** toman el color de la ficha.
+  - **Verificación:** se probó en el navegador con tres combinaciones.
+  - **Documentación:** el paso a paso técnico está en `art/characters/PIPELINE.md`, sección "Del asset al juego".
+- **Postura sobre la tabla:** dos riders tenían un pie en el aire, porque la tabla apuntaba derecho y los pies de los sprites están en diagonal. Se resolvió sin regenerar imágenes: se detectan los apoyos en cada pose y en cada cuadro se proyectan desde la cámara al plano del deck. Además, el sprite se inclina en las curvas, flexiona al frenar y rebota con la velocidad, lo que compensa el carving tímido de las generaciones. Detalle en `art/characters/PIPELINE.md`, secciones 5 y 6.
+- **Poses v2 de Killa y Nia (el hallazgo más importante de la ronda):**
+  - **El problema:** la generación encadenada ("dibujá a este personaje en la pose de la referencia") dejó a 2 de 4 personajes con las piernas abiertas de costado, una postura que no es de longboard.
+  - **Dos soluciones de código descartadas:**
+    - Girar la tabla: quedaba en diagonal respecto de la ruta.
+    - Deformar la pierna en el shader: dejaba cortes visibles.
+  - **El arreglo en la imagen:** cada pose pasó a ser una EDICIÓN de la pose original de Tomi. El modelo recibe esa pose más la ficha del personaje y cambia solo la identidad, manteniendo pies, flexión y encuadre. Resultado: 6/6 poses con postura correcta.
+  - **Detalle perdido:** la mochila de Nia apareció en una sola pose. Se regeneraron dos con el detalle explícito en el prompt ("KEEP").
+  - **Costo:** 8 imágenes, ≈284 créditos.
+  - **Lección:** para variaciones de un personaje en una pose fija, editar la imagen de referencia es mucho más fiel que pedir que la copie. Queda como método recomendado en `art/characters/PIPELINE.md` ("Método v2"), con la función `repose()` en `art/comfyui-riders.mjs`.

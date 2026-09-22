@@ -5,12 +5,12 @@ import * as THREE from './vendor/three.module.js';
 // Tree sheet cells: 0 cardón, 1 álamo, 2 algarrobo, 3 molle.
 const TREE_SCALE=[1,1.8,1.1,.95];
 export function createScenery(scene,{terrain,trees,rocks,hide=()=>false}){
- const sprites=[];let look=0,treeSheet=null;
+ const sprites=[],spriteTint=new THREE.Color('#ffffff');let treeSheet=null;
  // Scattered trees and rocks never land inside the town grid.
  for(const t of trees)if(hide(t.s,t.x))t.group.visible=false;
  for(const r of rocks)if(hide(r.s,r.x))r.mesh.visible=false;
  const extra=[];const trunk=new THREE.MeshStandardMaterial({color:'#6f7d55',roughness:1,flatShading:true});
- const tint=()=>{for(const m of sprites)m.color.set(look===2?'#5d6488':look===1?'#d9c6e0':'#ffffff');};
+ const tint=()=>{for(const m of sprites)m.color.copy(spriteTint);};
  async function load(url){const image=new Image();image.src='./assets/environment/'+url;await image.decode();return image;}
  // Crops each cell of a 2x2 sheet to the bounds of its opaque pixels.
  function cells(image){
@@ -40,7 +40,7 @@ export function createScenery(scene,{terrain,trees,rocks,hide=()=>false}){
    tint();
  }
  upgrade();
- return {setLook(index){look=index;tint();},
+ return {setTint(color){spriteTint.copy(color);tint();},
    // Trees planted by the town (patios, plaza). Low-poly placeholder until the sheet loads.
    addTree(position,type,h){const group=new THREE.Group();group.position.copy(position);scene.add(group);
      if(treeSheet)place(group,treeSheet[type],h);else{const m=new THREE.Mesh(new THREE.IcosahedronGeometry(1,0),trunk);m.scale.set(h*.3,h*.45,h*.3);m.position.y=h*.6;m.castShadow=true;group.add(m);}

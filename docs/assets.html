@@ -104,6 +104,60 @@ painting of the Quebrada de Humahuaca (Jujuy, Argentina).</code></pre>
 </section>
 
 <section>
+  <span class="eyebrow">Garage</span>
+  <h2>Riders y tablas</h2>
+  <p>El juego suma una pantalla para elegir rider y otra para elegir tabla. Los personajes nuevos siguen el estilo del rider original, con distintos géneros, edades e identidades. Se generan <b>sin tabla</b> y la tabla se dibuja aparte: cinco riders y seis tablas son 26 imágenes en lugar de 120 (30 combinaciones × 4 poses), y cada tabla nueva sirve para todos.</p>
+  <div class="flow" aria-label="Flujo del workflow de personajes">
+    <div class="key"><small>Nano Banana Pro</small><b>Ficha de frente</b><span>Identidad: cara, pelo, ropa y colores, con la pose original como referencia de estilo.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><small>Nano Banana Pro</small><b>Pose neutral</b><span>Ficha + pose original: misma cámara, escala y encuadre, sin la tabla.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><small>Nano Banana Pro × 2</small><b>Carving</b><span>Pose neutral + carving original, sin espejar al personaje.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><small>BiRefNet</small><b>Recorte</b><span>Fondo transparente para las cuatro imágenes, en el mismo workflow.</span></div>
+  </div>
+  <div class="riders">
+    <figure><img src="img/riders/tomi.webp" alt="Tomi: ficha de frente, pose neutral y carving a cada lado" width="1000" height="372" loading="lazy"><figcaption><b>Tomi</b>, el rider original: sus tres poses se editaron solo para quitarle la tabla.</figcaption></figure>
+    <figure><img src="img/riders/killa.webp" alt="Killa: ficha de frente, pose neutral y carving a cada lado" width="1000" height="372" loading="lazy"><figcaption><b>Killa</b>, mujer kolla de la Quebrada: gorro tejido, trenzas y bolso con guarda andina, en ropa de skater actual.</figcaption></figure>
+    <figure><img src="img/riders/ale.webp" alt="Ale: ficha de frente, pose neutral y carving a cada lado" width="1000" height="372" loading="lazy"><figcaption><b>Ale</b>, persona no binaria: pelo lila con undercut, remera oversize y cargo.</figcaption></figure>
+    <figure><img src="img/riders/ramon.webp" alt="Ramón: ficha de frente, pose neutral y carving a cada lado" width="1000" height="372" loading="lazy"><figcaption><b>Ramón</b>, veterano del downhill de unos 60 años, con guantes de slide.</figcaption></figure>
+    <figure><img src="img/riders/nia.webp" alt="Nia: ficha de frente, pose neutral y carving a cada lado" width="1000" height="372" loading="lazy"><figcaption><b>Nia</b>, mujer afrolatina: afro, bomber y rodilleras.</figcaption></figure>
+  </div>
+  <figure><div class="checker"><img src="img/riders/boards.webp" alt="Seis tablas: Cardonal, Siete Colores, Garza, Faroles, Tejido y Cóndor" width="1200" height="358" loading="lazy"></div><figcaption>Seis tablas diseñadas para el juego: Cardonal, Siete Colores, Garza, Faroles, Tejido y Cóndor. Vista inferior en 9:16, con el panorama de la Quebrada como referencia de estilo. No se usaron fotos ni gráficas de marcas reales.</figcaption></figure>
+  <div class="notes">
+    <p class="note">La identidad se mantuvo en las cuatro imágenes de cada rider y ninguna pose quedó con restos de tabla.</p>
+    <p class="note bad"><b>Carving tímido.</b> Incluso con el prompt reforzado, los riders nuevos se inclinan menos que la referencia. Es el primer nodo a regenerar.</p>
+  </div>
+  <h3>Del asset al juego</h3>
+  <p>El rider es un sprite 2D y la tabla un objeto 3D debajo de sus pies. El garage guarda la elección y la aplica en vivo, sin recargar la bajada.</p>
+  <ol class="steps">
+    <li><div><b>Deck recortado por su propio alfa.</b> La imagen de ComfyUI es la textura de un plano con <code>alphaTest</code>: la silueta de cada tabla sale de la imagen, sin modelar formas.</div></li>
+    <li><div><b>Grip transparente.</b> La cámara ve la tabla desde arriba, así que la cara superior muestra la gráfica oscurecida. Un segundo plano teñido de madera, 3 cm más abajo, da el espesor.</div></li>
+    <li><div><b>Medidas reales.</b> El largo sale de la ficha de cada tabla (38" a 46"). Las ruedas toman el color de la ficha, giran con la velocidad y el deck se inclina con el carving.</div></li>
+    <li><div><b>Pies sobre el deck.</b> El sprite se ancla en la última fila opaca del alfa (la suela) y se apoya en la cara superior de la tabla.</div></li>
+    <li><div><b>Cambio sin parpadeo.</b> Cada pose nueva reemplaza a la vieja cuando termina de cargar, y la textura anterior se libera.</div></li>
+    <li><div><b>La tabla va derecha y se desliza bajo los pies.</b> En cada pose se detecta dónde apoya cada zapatilla. En cada cuadro, el rayo de la cámara que pasa por esos puntos marca dónde se ve cada pie sobre el deck, y la tabla, siempre apuntando por la ruta, se corre de costado y hacia adelante hasta quedar debajo.</div></li>
+    <li><div><b>Cuerpo sobre la pose pintada.</b> El sprite se inclina hacia la curva pivotando en los pies, flexiona las rodillas al frenar y rebota apenas con la velocidad.</div></li>
+  </ol>
+  <h3>Cuando el problema está en la imagen, se arregla en la imagen</h3>
+  <p>Dos riders tenían un pie en el aire. Primero se intentó resolverlo con código, y las dos soluciones empeoraron el resultado. La causa real era que Killa y Nia no tenían una postura de longboard: la generación encadenada les había abierto las piernas de costado. Se regeneraron sus poses editando las poses originales de Tomi y cambiando solo la identidad, y el problema desapareció sin trucos.</p>
+  <div class="pair">
+    <figure><img src="img/riders/fit-before.jpg" alt="Killa y Nia con las piernas abiertas de costado y un pie en el aire junto a la tabla" width="600" height="298" loading="lazy"><figcaption>Antes: piernas abiertas de costado, una postura que no es de rider.</figcaption></figure>
+    <figure><img src="img/riders/fit-after.jpg" alt="Killa y Nia con los pies uno detrás del otro, apoyados sobre una tabla recta" width="600" height="298" loading="lazy"><figcaption>Después: pies uno detrás del otro sobre la tabla recta, como Tomi.</figcaption></figure>
+  </div>
+  <div class="notes">
+    <p class="note bad"><b>Girar la tabla para seguir los pies.</b> Los pies apoyaban, pero la tabla iba en diagonal respecto de la ruta. Se descartó: la tabla va derecha y es el cuerpo el que se adapta.</p>
+    <p class="note bad"><b>Deformar la pierna en el shader.</b> Mover la pierna de adelante con una máscara dejaba cortes visibles. Se sacó del código.</p>
+    <p class="note">El punto de apoyo se calibró con hojas de contacto de los cinco riders. En la suela, todos parecían parados sobre la nariz; al 5 % de la altura, sobre la cola. Quedó en 3,5 %.</p>
+  </div>
+  <div class="pair">
+    <figure><img src="img/riders/ingame-chase.jpg" alt="Ramón bajando por la ruta sobre la tabla Siete Colores, visto desde la cámara del juego" width="1200" height="988" loading="lazy"><figcaption>Cámara del juego: Ramón sobre Siete Colores.</figcaption></figure>
+    <figure><img src="img/riders/ingame-side.jpg" alt="Vista lateral del deck drop-through con ruedas violetas bajo las zapatillas del rider" width="1200" height="988" loading="lazy"><figcaption>De costado: silueta drop-through, canto de madera, trucks y ruedas del color de la ficha.</figcaption></figure>
+  </div>
+  <p class="cap">El paso a paso completo, del workflow de ComfyUI al código del juego, está en <code>art/characters/PIPELINE.md</code>.</p>
+</section>
+
+<section>
   <span class="eyebrow">Comparativa</span>
   <h2>Nano Banana Pro contra tres modelos abiertos</h2>
   <p>Mismo encargo, mismas referencias y mismas semillas, con dos variantes de la etapa Valparaíso. Los modelos abiertos corrieron en la misma cuenta de Comfy Cloud, con sus ajustes recomendados.</p>
@@ -194,8 +248,10 @@ geq=r='r(X,Y)-if(gt(min(r(X,Y),b(X,Y))-g(X,Y),50),min(r(X,Y),b(X,Y))-g(X,Y),0)':
       <tr><th>2</th><td>Comparativa</td><td>Flux.2 Dev, Qwen-Image-Edit 2511, Z-Image Turbo</td><td class="num">12</td><td class="num">—</td><td class="num">313 s</td><td>Márgenes, puertas prohibidas, vistas en perspectiva.</td></tr>
       <tr><th>4</th><td>Panorama de la Quebrada (4K)</td><td>Nano Banana Pro</td><td class="num">1</td><td class="num">62</td><td class="num">—</td><td>Encuadre alto, corregido en posproceso.</td></tr>
       <tr><th>4</th><td>6 casas, iglesia, suelo, calle, pirca, vegetación</td><td>Nano Banana Pro + BiRefNet</td><td class="num">20</td><td class="num">706</td><td class="num">71 s</td><td>Márgenes en 3 casas; algarrobo cortado.</td></tr>
+      <tr><th>5</th><td>5 riders × 4 imágenes, 6 tablas</td><td>Nano Banana Pro + BiRefNet</td><td class="num">26</td><td class="num">≈923</td><td class="num">≈713 s</td><td>Carving menos inclinado que la referencia; manchas en el borde de una tabla.</td></tr>
+      <tr><th>5</th><td>Poses v2 de Killa y Nia (edición sobre la pose original)</td><td>Nano Banana Pro + BiRefNet</td><td class="num">8</td><td class="num">≈284</td><td class="num">—</td><td>La mochila de Nia aparecía en una sola pose: se regeneraron dos.</td></tr>
     </tbody>
-    <tfoot><tr><th>Total</th><td></td><td></td><td class="num">52</td><td class="num">≈1.444</td><td class="num">≈457 s</td><td></td></tr></tfoot>
+    <tfoot><tr><th>Total</th><td></td><td></td><td class="num">86</td><td class="num">≈2.651</td><td class="num">≈1.170 s</td><td></td></tr></tfoot>
   </table>
   </div>
   <p class="cap">Datos del registro de facturación de Comfy Cloud. Nano Banana Pro costó ≈35,4 créditos por imagen a 1K y 2K, y 62 a 4K. GPU: RTX Pro 6000.</p>

@@ -121,3 +121,5 @@ tbody th,tfoot th{font-family:var(--display);font-weight:700;white-space:nowrap}
 .refs span{font-size:.9rem;color:var(--muted)}
 footer{padding-top:56px;font-size:.83rem;color:var(--muted);display:grid;gap:6px}
 @media (prefers-reduced-motion:no-preference){.cards a{transition:border-color .15s}}
+.riders{display:grid;gap:14px}
+.riders img{background:var(--card);border-radius:8px}

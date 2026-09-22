@@ -30,5 +30,5 @@ vec3 backdropBehind(vec3 d){
  return texture2D(backdropMap,clamp(uv,.001,.999)).rgb*backdropTint;}
 #endif`;
  THREE.ShaderChunk.fog_fragment='#ifdef USE_FOG\nfloat fogFactor=smoothstep(fogNear,fogFar,vFogDepth);\ngl_FragColor.rgb=mix(gl_FragColor.rgb,backdropBehind(normalize(vFogDir)),fogFactor);\n#endif';
- return {update(distance,height,x,look){group.position.set(x*.25,height,-distance);material.color.set(look===2?'#424c7e':look===1?'#c6afd0':'#ffffff');}};
+ return {update(distance,height,x,tint){group.position.set(x*.25,height,-distance);material.color.copy(tint);}};
 }

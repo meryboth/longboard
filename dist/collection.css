@@ -1,1 +1,120 @@
-.loot{position:fixed;left:40px;bottom:100px;background:#eef0dddb;border:1px solid #ffffff60;border-radius:12px;padding:17px 21px;color:#263e32;backdrop-filter:blur(8px);pointer-events:none}.loot .eyebrow{font-size:8px;letter-spacing:1.7px}.loot-items{display:flex;gap:25px;margin-top:13px}.loot-items>div{display:grid;grid-template-columns:28px 24px;gap:3px 5px;align-items:center}.loot-items span{font-size:24px}.loot-items b{font:500 25px 'Space Grotesk';font-variant-numeric:tabular-nums}.loot-items small{grid-column:1/3;font-size:8px;letter-spacing:1px}.loot p{font-size:9px;margin:13px 0 0;opacity:.7}body:not(.playing) .loot{display:none}@media(max-width:700px){.loot{left:16px;bottom:auto;top:100px;padding:10px 12px;max-width:195px}.loot-items{gap:10px;margin-top:8px}.loot-items>div{grid-template-columns:20px 16px}.loot-items span{font-size:18px}.loot-items b{font-size:18px}.loot .eyebrow{font-size:7px;letter-spacing:1px}.loot-items small{font-size:6px}.loot p{font-size:7px;max-width:160px;margin-top:8px}.route{top:205px;width:150px}}
+/* Vidrio líquido: base compartida por los botones del header y el botín. */
+.glass{position:relative;isolation:isolate;color:#21352d;
+  background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,.10));
+  -webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);
+  border:1px solid rgba(255,255,255,.55);border-radius:999px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75),inset 0 -1px 1px rgba(33,53,45,.10),0 8px 24px rgba(28,48,40,.16)}
+.glass::before{content:"";position:absolute;inset:1px 10% 52% 10%;border-radius:999px;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0))}
+body.night .glass{color:#eeeccf;background:linear-gradient(180deg,rgba(40,50,80,.55),rgba(22,30,52,.35));border-color:rgba(238,237,195,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 24px rgba(0,0,0,.3)}
+body.night .glass::before{background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,0))}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* Botín en el centro del header, solo durante la bajada. */
+.loot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:18px;padding:8px 18px;pointer-events:none}
+.loot>span{display:flex;align-items:center;gap:6px}
+.loot i{font-style:normal;font-size:18px;line-height:1}
+.loot b{font:600 16px/1 'Space Grotesk',sans-serif;font-variant-numeric:tabular-nums;min-width:1ch}
+body:not(.playing) .loot{opacity:0;visibility:hidden}
+@media(max-width:700px){.loot{position:fixed;top:78px;gap:12px;padding:6px 14px}.loot i{font-size:15px}.loot b{font-size:14px}}
+/* Widget de ubicación: la luz del juego sigue la hora real del lugar elegido. */
+.place{position:relative}
+#place-toggle{display:flex;align-items:center;gap:6px;padding:10px 15px;font-size:10px;letter-spacing:1px;font-weight:600}
+#place-toggle b{font:600 12px 'Space Grotesk',sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+#place-name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:uppercase}
+.place-panel{position:absolute;right:0;top:calc(100% + 10px);width:290px;border-radius:20px;padding:16px;display:grid;gap:10px;text-align:left;letter-spacing:0;z-index:5}
+.place-panel[hidden]{display:none}
+.place-title{margin:0;font:700 14px 'Space Grotesk',sans-serif}
+.place-copy{margin:0;font-size:12px;line-height:1.45;opacity:.8}
+#place-form{display:flex;gap:6px}
+#place-query{flex:1;min-width:0;font:inherit;font-size:13px;color:inherit;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.6);border-radius:999px;padding:8px 12px;outline:none}
+#place-query:focus-visible{border-color:#21352d}
+body.night #place-query{background:rgba(20,28,48,.5);border-color:rgba(238,237,195,.3)}
+.place-panel button.glass{padding:8px 13px;font-size:11px;font-weight:600;letter-spacing:.5px;cursor:pointer}
+#place-results{list-style:none;margin:0;padding:0;display:grid;gap:2px;max-height:180px;overflow:auto}
+#place-results:empty{display:none}
+#place-results button{width:100%;text-align:left;font:inherit;font-size:12.5px;color:inherit;background:none;border:0;border-radius:10px;padding:7px 9px;cursor:pointer}
+#place-results button:hover,#place-results button:focus-visible{background:rgba(255,255,255,.35)}
+.place-status{margin:0;font-size:11.5px;opacity:.8}
+.place-status:empty{display:none}
+@media(max-width:700px){#place-name{display:none}.place-panel{position:fixed;left:16px;right:16px;top:74px;width:auto}}
+/* Header en tres columnas: marca, botín centrado y controles. */
+header{display:grid;grid-template-columns:1fr auto 1fr;gap:16px}
+header .brand{justify-self:start}
+header .topright{justify-self:end;gap:10px}
+.loot{position:static;transform:none}
+.topright button.icon{width:38px;height:38px;padding:0;display:grid;place-items:center;font-size:15px;letter-spacing:0}
+.topright button.icon.off span{opacity:.45;text-decoration:line-through}
+.topright button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:1100px){#place-name{display:none}}
+@media(max-width:700px){header{grid-template-columns:auto 1fr}.loot{position:fixed;left:50%;transform:translateX(-50%)}}
+/* Footer con la identidad del header: dos píldoras de vidrio y nada más. */
+footer{border-top:0;padding:0 40px 26px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:10px;letter-spacing:0;pointer-events:none}
+footer .glass{pointer-events:auto}
+.keys{display:flex;gap:16px;padding:9px 16px;font-size:10.5px}
+.keys span{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.keys kbd{font:600 9px 'DM Sans',sans-serif;padding:3px 6px;border:1px solid currentColor;border-radius:6px;opacity:.75}
+.meter{display:flex;align-items:baseline;gap:14px;padding:8px 18px;margin-left:auto}
+.meter span{white-space:nowrap;font-size:10px;letter-spacing:.5px;opacity:.85}
+.meter span+span{padding-left:14px;border-left:1px solid currentColor}
+.meter b{font:600 18px/1 'Space Grotesk',sans-serif;font-variant-numeric:tabular-nums;opacity:1}
+body:not(.playing) .meter{opacity:0;visibility:hidden}
+@media(max-width:700px){footer{padding:0 16px 84px}.keys{display:none}}
+/* Modal de pausa y fin: panel de vidrio, botones de píldora. */
+.modal.glass{position:fixed;border-radius:28px;padding:34px 38px;min-width:320px;background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.38))}
+.modal.glass::before{inset:1px 8% 70% 8%}
+body.night .modal.glass{background:linear-gradient(180deg,rgba(40,50,80,.78),rgba(22,30,52,.66))}
+.modal .eyebrow{font-size:9px;letter-spacing:2px;opacity:.7}
+.modal h2{font-size:38px;margin:14px 0 8px}
+.modal p{margin:0 0 22px;opacity:.8}
+.primary{border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 22px rgba(20,40,30,.22)}
+body.night .modal .primary{background:#e6f0bf;color:#21352d}
+.text-button{margin-top:14px;opacity:.75}
+/* Avisos durante la bajada: la misma píldora de vidrio. */
+#message{color:#21352d;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,.22));-webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);
+  border:1px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 8px 24px rgba(28,48,40,.16)}
+body.night #message{color:#eeeccf;background:linear-gradient(180deg,rgba(40,50,80,.6),rgba(22,30,52,.4));border-color:rgba(238,237,195,.28)}
+/* Garage: elegir rider y tabla. Panel de vidrio sobre la bajada en pausa. */
+.garage{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;background:rgba(20,32,28,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.garage[hidden]{display:none}
+.garage-panel{position:relative;width:min(980px,100%);max-height:calc(100vh - 32px);overflow:auto;border-radius:30px;padding:26px 30px 24px;display:grid;gap:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.66),rgba(255,255,255,.44))}
+.garage-panel::before{inset:1px 6% 88% 6%}
+body.night .garage-panel{background:linear-gradient(180deg,rgba(36,46,76,.86),rgba(22,30,52,.78))}
+.garage-top{display:flex;justify-content:space-between;align-items:center}
+.garage-steps{display:flex;gap:8px;list-style:none;margin:0;padding:0;counter-reset:s}
+.garage-steps li{counter-increment:s;font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:7px 12px;border-radius:999px;border:1px solid currentColor;opacity:.45}
+.garage-steps li::before{content:counter(s) "  ·  "}
+.garage-steps li.on{opacity:1;background:#21352d;color:#e6f0bf;border-color:#21352d}
+.garage-steps li.done{opacity:.8}
+body.night .garage-steps li.on{background:#e6f0bf;color:#21352d;border-color:#e6f0bf}
+.garage-top .icon{width:36px;height:36px;padding:0;display:grid;place-items:center;font-size:13px}
+.garage h2{margin:6px 0 0;font:600 34px/1.05 'Space Grotesk',sans-serif;letter-spacing:-1px}
+.garage-sub{margin:0;font-size:13px;opacity:.75;max-width:60ch}
+.garage-grid{display:grid;gap:12px;margin-top:6px}
+.garage-grid.riders{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.garage-grid.boards{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.garage-card{position:relative;display:grid;gap:4px;justify-items:start;text-align:left;font:inherit;color:inherit;cursor:pointer;padding:10px 10px 12px;border-radius:20px;
+  background:rgba(255,255,255,.32);border:1px solid rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:transform .15s,box-shadow .15s}
+body.night .garage-card{background:rgba(255,255,255,.07);border-color:rgba(238,237,195,.22);box-shadow:none}
+.garage-card:hover{transform:translateY(-2px)}
+.garage-card[aria-checked="true"]{box-shadow:0 0 0 2.5px #21352d,inset 0 1px 0 rgba(255,255,255,.7);background:rgba(216,239,133,.45)}
+body.night .garage-card[aria-checked="true"]{box-shadow:0 0 0 2.5px #e6f0bf;background:rgba(216,239,133,.16)}
+.garage-card:focus-visible{outline:3px solid #ef673f;outline-offset:3px}
+.garage-card b{font:600 16px 'Space Grotesk',sans-serif;margin-top:6px}
+.garage-card small{font-size:11.5px;opacity:.72;line-height:1.35}
+.garage-art{position:relative;width:100%;display:grid;place-items:center;border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(33,53,45,.07),rgba(33,53,45,.14))}
+.garage-art.portrait{aspect-ratio:2/3}
+.garage-art.deck{aspect-ratio:9/16}
+.garage-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.garage-art.deck img{padding:8px 0}
+.garage-art em{font:600 44px 'Space Grotesk',sans-serif;font-style:normal;opacity:.25}
+.garage-art img+em{display:none}
+.wheels{position:absolute;top:18px;right:18px;width:14px;height:14px;border-radius:50%;background:var(--w);box-shadow:0 0 0 2px rgba(255,255,255,.8)}
+.garage-bottom{display:flex;justify-content:flex-end;align-items:center;gap:14px;margin-top:4px}
+.garage-bottom .text-button{margin:0;font-size:11px}
+.garage-bottom .text-button[hidden]{display:none}
+.garage-bottom .primary{min-width:0;padding:15px 22px}
+body.night .garage-bottom .primary{background:#e6f0bf;color:#21352d}
+@media(prefers-reduced-motion:reduce){.garage-card{transition:none}}
+@media(max-width:700px){.garage-panel{padding:18px;border-radius:24px}.garage h2{font-size:26px}.garage-grid.riders{grid-template-columns:repeat(2,1fr)}.garage-grid.boards{grid-template-columns:repeat(3,1fr)}}

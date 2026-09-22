@@ -1,0 +1,198 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "b671a87a2997975050f76fcc26fb455feab2990a13fc907d743994b293d4b928.png"
+  }
+ },
+ "2": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "de8abe2b15d34e00e6c7b38a24f09747c90b8b8b9700017da6d1345e77de46bd.png"
+  }
+ },
+ "3": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "588532820905179b4b047e477f51b859af132491260b25dd66a44072861f59c1.png"
+  }
+ },
+ "4": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "9ee8c77addeb547a60366a4dd6f619064659ca1e194647e7764a6ea3caae6f75.png"
+  }
+ },
+ "19": {
+  "class_type": "BatchImagesNode",
+  "inputs": {
+   "images.image0": [
+    "1",
+    0
+   ],
+   "images.image1": [
+    "4",
+    0
+   ]
+  }
+ },
+ "20": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "Edit the first image: replace the rider with the character from the second image (same face, hair, skin tone, body type, clothing, colours and accessories). Keep EXACTLY the pose of the first image: the same longboard stance with the feet one behind the other along the board, the same knee bend, lean, arm positions, camera angle, scale and position in the frame. Do not open the legs sideways. She wears her small black backpack with the skate helmet clipped to it, clearly visible on her back. Remove the longboard completely: no deck, no trucks, no wheels. Keep both shoes exactly where they stood on the deck, soles level, as if standing on an invisible board. plain flat light grey background (#d6d6d2), no floor, no shadow on the background, no text, no border. Match exactly the illustration style of the reference rider: clean ink outlines, soft cel shading, muted natural colours, semi-realistic adult proportions.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 5940,
+   "aspect_ratio": "2:3",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "19",
+    0
+   ]
+  }
+ },
+ "21": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "20",
+    0
+   ],
+   "filename_prefix": "deriva/rider_nia_v2_neutral"
+  }
+ },
+ "39": {
+  "class_type": "BatchImagesNode",
+  "inputs": {
+   "images.image0": [
+    "3",
+    0
+   ],
+   "images.image1": [
+    "4",
+    0
+   ]
+  }
+ },
+ "40": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "Edit the first image: replace the rider with the character from the second image (same face, hair, skin tone, body type, clothing, colours and accessories). Keep EXACTLY the pose of the first image: the same longboard stance with the feet one behind the other along the board, the same knee bend, lean, arm positions, camera angle, scale and position in the frame. Do not open the legs sideways. She wears her small black backpack with the skate helmet clipped to it, clearly visible on her back. Remove the longboard completely: no deck, no trucks, no wheels. Keep both shoes exactly where they stood on the deck, soles level, as if standing on an invisible board. plain flat light grey background (#d6d6d2), no floor, no shadow on the background, no text, no border. Match exactly the illustration style of the reference rider: clean ink outlines, soft cel shading, muted natural colours, semi-realistic adult proportions.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 5942,
+   "aspect_ratio": "2:3",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "39",
+    0
+   ]
+  }
+ },
+ "41": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "40",
+    0
+   ],
+   "filename_prefix": "deriva/rider_nia_v2_right"
+  }
+ },
+ "90": {
+  "class_type": "LoadBackgroundRemovalModel",
+  "inputs": {
+   "bg_removal_name": "birefnet.safetensors"
+  }
+ },
+ "100": {
+  "class_type": "RemoveBackground",
+  "inputs": {
+   "bg_removal_model": [
+    "90",
+    0
+   ],
+   "image": [
+    "20",
+    0
+   ]
+  }
+ },
+ "101": {
+  "class_type": "InvertMask",
+  "inputs": {
+   "mask": [
+    "100",
+    0
+   ]
+  }
+ },
+ "102": {
+  "class_type": "JoinImageWithAlpha",
+  "inputs": {
+   "image": [
+    "20",
+    0
+   ],
+   "alpha": [
+    "101",
+    0
+   ]
+  }
+ },
+ "103": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "102",
+    0
+   ],
+   "filename_prefix": "deriva/rider_nia_v2_neutral_cutout"
+  }
+ },
+ "110": {
+  "class_type": "RemoveBackground",
+  "inputs": {
+   "bg_removal_model": [
+    "90",
+    0
+   ],
+   "image": [
+    "40",
+    0
+   ]
+  }
+ },
+ "111": {
+  "class_type": "InvertMask",
+  "inputs": {
+   "mask": [
+    "110",
+    0
+   ]
+  }
+ },
+ "112": {
+  "class_type": "JoinImageWithAlpha",
+  "inputs": {
+   "image": [
+    "40",
+    0
+   ],
+   "alpha": [
+    "111",
+    0
+   ]
+  }
+ },
+ "113": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "112",
+    0
+   ],
+   "filename_prefix": "deriva/rider_nia_v2_right_cutout"
+  }
+ }
+}
