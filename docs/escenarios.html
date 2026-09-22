@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Escenarios de Deriva</title>
+<meta name="description" content="Cómo se construyeron los escenarios de Deriva: de un terreno plano con cajas a un pueblo de la Quebrada de Humahuaca en damero, con niebla que se disuelve en un panorama pintado.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="report.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top" aria-label="Reportes">
+  <a class="brand" href="index.html">◭ DERIVA</a>
+  <ul><li><a href="index.html">Caso de estudio</a></li><li><a href="escenarios.html" aria-current="page">Escenarios</a></li><li><a href="assets.html">Assets con IA</a></li><li><a href="https://github.com/meryboth/longboard">Código</a></li></ul>
+</nav>
+
+<header>
+  <span class="eyebrow">Reporte 1 de 2 · construcción de escenarios</span>
+  <h1>Un pueblo se lee por su <em>trama.</em></h1>
+  <p class="lede">Cómo el escenario de Deriva pasó de cajas sobre un terreno plano a un pueblo de la Quebrada de Humahuaca. La lección central llegó a mitad de camino: las texturas pintadas mejoran cada objeto, pero lo que hace que un lugar parezca real es su geometría urbana, es decir, calles, manzanas y fachadas sobre la línea de la vereda.</p>
+</header>
+
+<section>
+  <span class="eyebrow">Punto de partida</span>
+  <h2>Un prototipo que se leía como maqueta</h2>
+  <div class="pair">
+    <figure><span class="tag">Antes</span><img src="img/antes.jpg" alt="Prototipo con casas en forma de caja y murales procedurales" width="1280" height="1064"><figcaption>Casas en forma de caja con techo piramidal y ventanas oscuras, murales generados por código y una niebla lineal hacia un color menta.</figcaption></figure>
+    <div class="notes" style="align-content:start">
+      <p class="note">La ruta es una curva paramétrica de 2,4 km (<code>roadX(s)</code>, <code>roadY(s)</code>). Todo el escenario se ubica en coordenadas de recorrido: distancia <code>s</code> y desplazamiento lateral.</p>
+      <p class="note">La conducción es arcade: la tabla sigue el eje de la ruta con un desplazamiento lateral limitado a ±6 m. Eso liberó a los muros y las casas de cualquier función de colisión: son puro escenario.</p>
+      <p class="note bad">Los volúmenes planos de un solo color eran lo único "sin pintar" en una escena que ya tenía un panorama ilustrado y murales.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="phase">Ronda 1 · piel pintada</span>
+  <h2>Volúmenes 3D con fachadas pintadas, no sprites</h2>
+  <p>La primera decisión fue mantener las cajas y cambiarles la piel: una textura ortográfica por cara (frente y lateral), generada con IA. Con sprites planos las casas se verían de cartón al pasar al lado; con volúmenes se conservan la paralaje, las sombras reales y los tres ambientes de luz del juego.</p>
+  <pre><code>// BoxGeometry: +x, -x, +y, -y, +z (frente, hacia la calle), -z
+const body = new THREE.InstancedMesh(geometry, [side, side, roof, roof, front, side], count);
+// Las fachadas están pintadas a escala real: la casa se escala entera, la pintura no se estira.</code></pre>
+</section>
+
+<section>
+  <span class="phase">Ronda 2 · densidad</span>
+  <h2>Más casas, mismo costo de dibujo</h2>
+  <div class="notes">
+    <p class="note good"><b>Instancing por variante.</b> Todas las casas que comparten fachada son un solo <code>InstancedMesh</code>. Pasar de 192 a 649 casas no agregó llamadas de dibujo: quedaron 16 (cuerpo y techo por variante).</p>
+    <p class="note good"><b>Nivel determinista.</b> Las filas nuevas usan su propio generador aleatorio, así los conos y coleccionables quedan en el mismo lugar y las partidas siguen siendo comparables.</p>
+    <p class="note bad"><b>Loma blanca.</b> El borde del terreno subía 43 m a 200 m de la ruta, y la niebla lo convertía en una montaña blanca delante del panorama.</p>
+  </div>
+</section>
+
+<section>
+  <span class="phase">Ronda 3 · distancia</span>
+  <h2>Una niebla que se disuelve en la pintura</h2>
+  <p>La niebla estándar de Three.js mezcla lo lejano con un color fijo. Sobre un fondo pintado eso produce siluetas planas de otro color. La solución fue reemplazar el chunk de niebla de todos los materiales: cada fragmento lejano se mezcla con el color del panorama que está exactamente detrás de él en la dirección de la mirada. El resultado se parece a una pérdida de opacidad hacia el fondo.</p>
+  <div class="diagram" role="img" aria-label="Diagrama lateral: la cámara mira una casa lejana; el rayo continúa hasta el cilindro del panorama y el color de ese punto se mezcla con la casa según la distancia">
+    <svg viewBox="0 0 760 270" xmlns="http://www.w3.org/2000/svg">
+      <style>.g{stroke:var(--line);stroke-width:2}.ray{stroke:var(--ink);stroke-width:2;fill:none}.dash{stroke:var(--adobe);stroke-width:2;stroke-dasharray:6 5;fill:none}.hs{fill:var(--adobe)}.cyl{fill:var(--surface);stroke:var(--muted);stroke-width:2}.cam{fill:var(--ink)}.hit{fill:var(--adobe)}.lbl{font-size:13px}.sm{font-size:12px}</style>
+      <line class="g" x1="20" y1="210" x2="740" y2="210"/>
+      <rect class="cyl" x="660" y="30" width="46" height="180" rx="4"/>
+      <text class="sm muted" x="683" y="24" text-anchor="middle">panorama</text>
+      <text class="sm muted" x="683" y="232" text-anchor="middle">cilindro r = 440 m</text>
+      <path class="cam" d="M52 150 l22 -10 v20 z"/><circle class="cam" cx="46" cy="150" r="9"/>
+      <text class="lbl" x="34" y="182">cámara</text>
+      <rect class="hs" x="330" y="160" width="46" height="50"/>
+      <text class="lbl" x="353" y="232" text-anchor="middle">casa a 300 m</text>
+      <line class="ray" x1="74" y1="150" x2="330" y2="178"/>
+      <line class="dash" x1="376" y1="183" x2="660" y2="114"/>
+      <circle class="hit" cx="660" cy="114" r="6"/>
+      <text class="lbl" x="452" y="118">el rayo sigue hasta el panorama</text>
+      <text class="sm muted" x="452" y="136">intersección rayo–cilindro → coordenada UV</text>
+      <text class="lbl" x="130" y="60">color final = mix(color de la casa, panorama detrás, f)</text>
+      <text class="sm muted" x="130" y="80">f = smoothstep(90 m, 420 m, distancia)</text>
+      <text class="sm muted" x="130" y="100">antes: mix(color de la casa, menta #dbe6de, f)</text>
+    </svg>
+  </div>
+  <pre><code>// Reemplazo global del chunk de niebla (city-backdrop.js)
+THREE.Material.prototype.onBeforeCompile = shader =&gt; Object.assign(shader.uniforms, fogUniforms);
+THREE.ShaderChunk.fog_fragment = `
+  float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
+  gl_FragColor.rgb = mix(gl_FragColor.rgb, backdropBehind(normalize(vFogDir)), fogFactor);`;</code></pre>
+  <p class="cap">La dirección de la mirada se calcula en el vertex shader a partir de <code>mvPosition</code> y la matriz de vista, así que funciona igual con mallas instanciadas y sprites.</p>
+</section>
+
+<section>
+  <span class="eyebrow">Ronda 3 · diagnóstico</span>
+  <h2>Referencias: el problema era la geometría</h2>
+  <p>Con las casas pintadas y la niebla resuelta, la escena seguía leyéndose como "casas sueltas en una ladera". Una investigación de juegos y películas con ciudades de cerro llevó a una conclusión clara: primero la trama urbana, después las texturas.</p>
+  <ul class="refs">
+    <li><b><a href="https://gdcvault.com/play/1022295/The-Art-of">Firewatch</a></b><span>Niebla por rampa de color según la distancia, la base de la niebla que se disuelve.</span></li>
+    <li><b><a href="https://80.lv/articles/level-game-production-lonely-mountains-downhill">Lonely Mountains: Downhill</a></b><span>La pista manda y el terreno se esculpe alrededor de ella. Mismo género que Deriva.</span></li>
+    <li><b><a href="https://www.cookandbecker.com/en/artwork/1812/antananarivo-vista-uncharted-4-naughty-dog.html">Uncharted 4 · Antananarivo</a></b><span>Una ciudad de cerro se lee por sus techos y por un hito vertical.</span></li>
+    <li><b>Forza Horizon 5 · Guanajuato</b><span>Cables sobre la calle y un color por fachada dan escala a velocidad.</span></li>
+    <li><b><a href="https://www.japantimes.co.jp/culture/2024/10/27/film/studio-ghibli-hayao-miyazaki-visby-sweden/">Kiki's Delivery Service</a></b><span>Una ciudad inventada convence si se arma con piezas reales documentadas.</span></li>
+    <li><b>Quebrada de Humahuaca</b><span>Purmamarca, Tilcara y Humahuaca: damero colonial, adobe sobre la vereda, plaza con iglesia y pircas.</span></li>
+  </ul>
+</section>
+
+<section>
+  <span class="phase">Ronda 4 · Jujuy</span>
+  <h2>Un damero colonial alrededor de la ruta</h2>
+  <p>El escenario final se inspira en los pueblos de la Quebrada de Humahuaca y en la Cuesta de Lipán, la ruta que baja zigzagueando hasta Purmamarca. La ruta del juego se convierte en la calle principal y el pueblo se genera a su alrededor.</p>
+  <div class="route" aria-label="Tramos del recorrido">
+    <div><small>0 – 620 m</small><b>La cuesta</b><span>Pircas de piedra seca, puestos rurales de a uno o dos, cardones.</span></div>
+    <div><small>620 – 1.880 m</small><b>El pueblo</b><span>Damero de manzanas con plaza e iglesia; la ruta es la calle principal.</span></div>
+    <div><small>1.880 – 2.400 m</small><b>La salida</b><span>Vuelven las pircas, con álamos junto al cauce seco.</span></div>
+  </div>
+  <div class="diagram" role="img" aria-label="Plano del damero: la ruta en el centro, dos filas de manzanas de 40 por 38 metros a cada lado con casas en el perímetro y patios adentro, calles transversales de 8 metros cada 48, una calle paralela y una manzana libre con plaza e iglesia">
+    <svg viewBox="0 0 680 470" xmlns="http://www.w3.org/2000/svg">
+      <style>.bk{fill:var(--adobe)}.pt{fill:var(--surface)}.st{fill:var(--card)}.rd{fill:var(--muted)}.pz{fill:var(--lime)}.ch{fill:var(--card);stroke:var(--ink);stroke-width:1.5}.tr{fill:var(--ok)}.dim{stroke:var(--ink);stroke-width:1}.lbl{font-size:12.5px}.lb2{font-size:11.5px}</style>
+      <rect class="st" x="30" y="32" width="620" height="386"/>
+      <g id="side-top">
+        <rect class="bk" x="56" y="41" width="80" height="76"/><rect class="pt" x="72" y="57" width="48" height="44"/>
+        <rect class="bk" x="152" y="41" width="80" height="76"/><rect class="pt" x="168" y="57" width="48" height="44"/>
+        <rect class="bk" x="248" y="41" width="80" height="76"/><rect class="pt" x="264" y="57" width="48" height="44"/>
+        <rect class="bk" x="344" y="41" width="80" height="76"/><rect class="pt" x="360" y="57" width="48" height="44"/>
+        <rect class="bk" x="440" y="41" width="80" height="76"/><rect class="pt" x="456" y="57" width="48" height="44"/>
+        <rect class="bk" x="536" y="41" width="80" height="76"/><rect class="pt" x="552" y="57" width="48" height="44"/>
+        <rect class="bk" x="56" y="133" width="80" height="76"/><rect class="pt" x="72" y="149" width="48" height="44"/>
+        <rect class="bk" x="152" y="133" width="80" height="76"/><rect class="pt" x="168" y="149" width="48" height="44"/>
+        <rect class="pz" x="248" y="133" width="80" height="76"/>
+        <rect class="ch" x="272" y="137" width="32" height="20"/><rect class="ch" x="304" y="150" width="9" height="9"/>
+        <circle class="tr" cx="258" cy="200" r="4"/><circle class="tr" cx="318" cy="200" r="4"/><circle class="tr" cx="258" cy="170" r="4"/><circle class="tr" cx="318" cy="170" r="4"/>
+        <rect class="bk" x="344" y="133" width="80" height="76"/><rect class="pt" x="360" y="149" width="48" height="44"/>
+        <rect class="bk" x="440" y="133" width="80" height="76"/><rect class="pt" x="456" y="149" width="48" height="44"/>
+        <rect class="bk" x="536" y="133" width="80" height="76"/><rect class="pt" x="552" y="149" width="48" height="44"/>
+      </g>
+      <rect class="rd" x="30" y="214" width="620" height="22"/>
+      <g>
+        <rect class="bk" x="56" y="241" width="80" height="76"/><rect class="pt" x="72" y="257" width="48" height="44"/>
+        <rect class="bk" x="152" y="241" width="80" height="76"/><rect class="pt" x="168" y="257" width="48" height="44"/>
+        <rect class="bk" x="248" y="241" width="80" height="76"/><rect class="pt" x="264" y="257" width="48" height="44"/>
+        <rect class="bk" x="344" y="241" width="80" height="76"/><rect class="pt" x="360" y="257" width="48" height="44"/>
+        <rect class="bk" x="440" y="241" width="80" height="76"/><rect class="pt" x="456" y="257" width="48" height="44"/>
+        <rect class="bk" x="536" y="241" width="80" height="76"/><rect class="pt" x="552" y="257" width="48" height="44"/>
+        <rect class="bk" x="56" y="333" width="80" height="76"/><rect class="pt" x="72" y="349" width="48" height="44"/>
+        <rect class="bk" x="152" y="333" width="80" height="76"/><rect class="pt" x="168" y="349" width="48" height="44"/>
+        <rect class="bk" x="248" y="333" width="80" height="76"/><rect class="pt" x="264" y="349" width="48" height="44"/>
+        <rect class="bk" x="344" y="333" width="80" height="76"/><rect class="pt" x="360" y="349" width="48" height="44"/>
+        <rect class="bk" x="440" y="333" width="80" height="76"/><rect class="pt" x="456" y="349" width="48" height="44"/>
+        <rect class="bk" x="536" y="333" width="80" height="76"/><rect class="pt" x="552" y="349" width="48" height="44"/>
+      </g>
+      <text class="lbl" x="340" y="229" text-anchor="middle" style="fill:var(--paper)">ruta = calle principal</text>
+      <line class="dim" x1="56" y1="438" x2="136" y2="438"/><line class="dim" x1="56" y1="433" x2="56" y2="443"/><line class="dim" x1="136" y1="433" x2="136" y2="443"/>
+      <text class="lb2" x="96" y="456" text-anchor="middle">manzana 40 m</text>
+      <line class="dim" x1="136" y1="438" x2="152" y2="438"/><line class="dim" x1="152" y1="433" x2="152" y2="443"/>
+      <text class="lb2" x="186" y="456" text-anchor="middle">calle 8 m</text>
+      <text class="lb2 muted" x="288" y="22" text-anchor="middle">plaza e iglesia</text>
+      <line class="dim" x1="288" y1="26" x2="288" y2="133"/>
+      <text class="lb2 muted" x="96" y="22" text-anchor="middle">casas sobre la línea municipal</text>
+      <text class="lb2 muted" x="584" y="22" text-anchor="middle">patio con árboles</text>
+      <line class="dim" x1="584" y1="26" x2="576" y2="70"/>
+      <text class="lb2 muted" x="660" y="129" text-anchor="end" transform="rotate(-90 664 125)">calle paralela</text>
+      <text class="lb2 muted" x="340" y="470" text-anchor="middle">escala aproximada: 1 manzana = 40 × 38 m, repetida cada 48 m</text>
+    </svg>
+  </div>
+  <div class="notes">
+    <p class="note"><b>Casas sobre la línea municipal.</b> Cada manzana se rodea de casas de 8 × 8 m mirando hacia su calle: la fila del frente mira a la ruta, la de atrás a la calle paralela y las de los extremos a las transversales. Adentro quedan patios con algarrobos y molles.</p>
+    <p class="note"><b>Desplazamiento sobre la normal.</b> Las posiciones se calculan a lo largo de la normal de la ruta, no en X. Así las calles transversales quedan perpendiculares a la calle principal aunque la ruta curve.</p>
+    <p class="note"><b>Valle plano.</b> Una máscara suave aplana el terreno bajo el pueblo, y en la cuesta vuelve la pendiente. Las casas y las calles apoyan siempre a nivel.</p>
+    <p class="note"><b>Nada suelto.</b> Fuera del pueblo solo hay puestos rurales de una o dos casas junto a la ruta. Los árboles y rocas aleatorios que caerían dentro de la trama se ocultan.</p>
+  </div>
+  <pre><code>// town.js — orientación de cada casa según la calle que enfrenta
+const facing = (s, side, dir) =&gt; {
+  const r = slope(s), n = Math.hypot(1, r);
+  if (dir === 'in')  return yaw(-side / n, -side * r / n); // hacia la ruta
+  if (dir === 'out') return yaw( side / n,  side * r / n); // hacia la calle paralela
+  if (dir === 'up')  return yaw(-r / n, 1 / n);            // hacia la transversal anterior
+  return yaw(r / n, -1 / n);                               // hacia la transversal siguiente
+};
+// game.js — el valle se aplana dentro del pueblo
+const groundY = (s, x) =&gt; { const t = townMask(s);
+  return roadY(s) - .15 + (1 - t) * ladera(s, x) - Math.max(0, Math.abs(x) - 60 - 45 * t) * .16; };</code></pre>
+</section>
+
+<section>
+  <span class="eyebrow">Ronda 4 · fondo</span>
+  <h2>El panorama y el encuadre</h2>
+  <p>El fondo es una pintura sobre un cilindro de 440 m de radio que acompaña al jugador. El primer panorama de la Quebrada se veía "alto": los cerros ocupaban el cielo. En lugar de regenerarlo, se bajó la pintura 90 m en el cilindro y se extendió el cielo estirando sus primeras filas de píxeles, que son un degradé sin nubes.</p>
+  <div class="pair">
+    <figure><img src="img/jujuy/panorama.jpg" alt="Panorama original de la Quebrada" width="1600" height="679" loading="lazy"><figcaption>Panorama generado: 21:9 a 4K.</figcaption></figure>
+    <figure><img src="img/jujuy/panorama-cielo.jpg" alt="Panorama con el cielo extendido hacia arriba" width="900" height="550" loading="lazy"><figcaption>Con 766 px de cielo agregados arriba. El cilindro pasó de −210…290 m a −300…420 m.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Resultado</span>
+  <h2>El recorrido terminado</h2>
+  <div class="grid3">
+    <figure><img src="img/game/cuesta.jpg" alt="La cuesta con pircas y un puesto de adobe" width="1280" height="1008" loading="lazy"><figcaption>La cuesta: pircas, puesto de adobe, molle y álamo.</figcaption></figure>
+    <figure><img src="img/game/techos.jpg" alt="Vista elevada de techos planos de barro" width="1280" height="1008" loading="lazy"><figcaption>Cámara abierta: los techos de barro venden la trama.</figcaption></figure>
+    <figure><img src="img/game/plaza.jpg" alt="Llegada a la plaza con campanario" width="1280" height="1008" loading="lazy"><figcaption>La plaza, con el campanario al fondo.</figcaption></figure>
+  </div>
+  <dl class="facts">
+    <div><dt>Casas</dt><dd><b>1.368</b>6 draw calls, una por fachada</dd></div>
+    <div><dt>Calles</dt><dd><b>27</b>transversales por lado, más la paralela</dd></div>
+    <div><dt>Árboles del pueblo</dt><dd><b>66</b>en patios y plaza</dd></div>
+    <div><dt>Recorrido</dt><dd><b>2,4 km</b>cuesta, pueblo y salida</dd></div>
+  </dl>
+</section>
+
+<footer>
+  <span>Código del escenario: <code>dist/town.js</code>, <code>dist/scenery.js</code>, <code>dist/walls.js</code> y <code>dist/city-backdrop.js</code> en <a href="https://github.com/meryboth/longboard">github.com/meryboth/longboard</a>.</span>
+  <span>Siguiente lectura: <a href="assets.html">cómo se crearon los assets con IA</a>.</span>
+</footer>
+</div>
+</body>
+</html>

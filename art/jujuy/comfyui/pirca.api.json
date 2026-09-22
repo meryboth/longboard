@@ -1,0 +1,36 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "2b910e004211af4efc5d2d9e69196f141d9515943793ea99992046247a08761c.png"
+  },
+  "_meta": {
+   "title": "Ref: panorama Quebrada"
+  }
+ },
+ "10": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "Front elevation of a dry-stone wall (pirca) of the Quebrada de Humahuaca: stacked irregular reddish, ochre and grey field stones without mortar, about 1 m tall. The wall fills the frame edge to edge, perfectly flat and orthographic, the left edge continues seamlessly into the right edge. No sky, no ground, no plants, no borders, even light. STYLE: match the hand-painted gouache technique, light and palette of the reference painting of the Quebrada de Humahuaca (Jujuy, Argentina): warm golden afternoon light, soft visible brush texture, earthy adobe tones.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 4501,
+   "aspect_ratio": "21:9",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "1",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_pirca"
+  }
+ }
+}

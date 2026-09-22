@@ -1,0 +1,89 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "fcf7faee0ce3266e4dbf08df86a02d06652326f7fdc721fff1d7a6aa8b0c7454.png"
+  },
+  "_meta": {
+   "title": "Ref: panorama ciudad"
+  }
+ },
+ "2": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "dafbaafa56bfbec06371db651a9fe1ba0b070331d1f95e4c06dc05d3277493d6.png"
+  },
+  "_meta": {
+   "title": "Ref: mural"
+  }
+ },
+ "3": {
+  "class_type": "BatchImagesNode",
+  "inputs": {
+   "images.image0": [
+    "1",
+    0
+   ],
+   "images.image1": [
+    "2",
+    0
+   ]
+  }
+ },
+ "30": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "Paint the FRONT FACADE of this house, a wall 7 m wide by 7 m tall (square). Ground floor: a wooden front door slightly off-centre and one window. Upper floor: two windows with shutters and a small balcony with iron railing. Windows are dark glass with a hint of warm interior, clearly framed.\n\nHOUSE: cream-white plastered ground floor, upper floor clad in horizontal wooden clapboard painted faded sky blue, white trim.\n\nThe reference images are the painted city panorama and a street mural from our game: match their painting style and palette only, do not copy their content.\n\nSTYLE: warm golden-hour painterly gouache illustration, soft visible brush texture, gentle weathering, palette of teal, terracotta, cream, ochre and muted pastels. Inspired by the hillside houses of Valparaiso, but fictional.\nFORMAT: a GAME TEXTURE for a 3D box. A perfectly flat orthographic elevation of ONE wall, seen dead-on, zero perspective, no depth. The wall fills the ENTIRE frame edge to edge: left and right image edges are the building corners, the bottom edge is the ground line with a thin weathered stone plinth, the top edge is the eave with a simple cornice. Two storeys.\nFORBIDDEN: sky, roof, ground, street, people, animals, vehicles, text, letters, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even, soft, shadowless lighting; only subtle ambient occlusion inside window recesses.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 1501,
+   "aspect_ratio": "1:1",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "3",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "Nano Banana Pro · FRENTE"
+  }
+ },
+ "31": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "30",
+    0
+   ],
+   "filename_prefix": "deriva/nb_house_e_front"
+  }
+ },
+ "41": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "The reference image is the approved FRONT facade of this exact house. Paint the SIDE FACADE of the SAME house, a wall 9 m wide by 7 m tall, facing the street: identical wall material, colours, window frames, shutters, plinth, cornice and painting style, so both walls meet seamlessly at the corner. Three windows per floor evenly spaced, one drainpipe at the right corner, no door.\n\nHOUSE: cream-white plastered ground floor, upper floor clad in horizontal wooden clapboard painted faded sky blue, white trim.\n\nSTYLE: warm golden-hour painterly gouache illustration, soft visible brush texture, gentle weathering, palette of teal, terracotta, cream, ochre and muted pastels. Inspired by the hillside houses of Valparaiso, but fictional.\nFORMAT: a GAME TEXTURE for a 3D box. A perfectly flat orthographic elevation of ONE wall, seen dead-on, zero perspective, no depth. The wall fills the ENTIRE frame edge to edge: left and right image edges are the building corners, the bottom edge is the ground line with a thin weathered stone plinth, the top edge is the eave with a simple cornice. Two storeys.\nFORBIDDEN: sky, roof, ground, street, people, animals, vehicles, text, letters, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even, soft, shadowless lighting; only subtle ambient occlusion inside window recesses.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 1502,
+   "aspect_ratio": "4:3",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "30",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "Nano Banana Pro · LATERAL"
+  }
+ },
+ "42": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "41",
+    0
+   ],
+   "filename_prefix": "deriva/nb_house_e_side"
+  }
+ }
+}

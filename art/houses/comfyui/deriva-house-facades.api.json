@@ -1,0 +1,196 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "fcf7faee0ce3266e4dbf08df86a02d06652326f7fdc721fff1d7a6aa8b0c7454.png"
+  },
+  "_meta": {
+   "title": "Ref: panorama ciudad"
+  }
+ },
+ "2": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "dafbaafa56bfbec06371db651a9fe1ba0b070331d1f95e4c06dc05d3277493d6.png"
+  },
+  "_meta": {
+   "title": "Ref: mural"
+  }
+ },
+ "3": {
+  "class_type": "BatchImagesNode",
+  "inputs": {
+   "images.image0": [
+    "1",
+    0
+   ],
+   "images.image1": [
+    "2",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "Refs de estilo"
+  }
+ },
+ "10": {
+  "class_type": "PrimitiveStringMultiline",
+  "inputs": {
+   "value": "STYLE — Match the hand-painted illustration style of the reference images: warm golden-hour painterly gouache, soft visible brush texture, gentle weathering, palette of teal, terracotta, cream, ochre and muted pastels. Inspired by the hillside houses of Valparaiso, but fictional.\nFORMAT — This is a GAME TEXTURE for a 3D box. A perfectly flat orthographic elevation of ONE wall, seen dead-on, zero perspective, no vanishing lines, no depth. The wall fills the ENTIRE frame edge to edge: the left and right image edges are the building corners, the bottom edge is the ground line with a thin weathered stone plinth, the top edge is the eave with a simple cornice. Two storeys, ground floor windows start about 1 m above the plinth.\nFORBIDDEN — no sky, no roof, no ground, no street, no sidewalk, no people, no animals, no vehicles, no text, no letters, no signs, no numbers, no plants or trees in front of the wall, no border or frame, no drop shadows from outside objects. Lighting is even, soft and shadowless (the 3D engine adds light and shadow); only subtle ambient occlusion inside window recesses."
+  },
+  "_meta": {
+   "title": "Estilo global (fijo)"
+  }
+ },
+ "11": {
+  "class_type": "PrimitiveStringMultiline",
+  "inputs": {
+   "value": "HOUSE: clad in corrugated metal sheets painted faded teal, cream window frames, terracotta door, slightly rusty edges."
+  },
+  "_meta": {
+   "title": "VARIANTE DE CASA (editar)"
+  }
+ },
+ "12": {
+  "class_type": "PrimitiveStringMultiline",
+  "inputs": {
+   "value": "Reference images: the first is the painted panorama of our game city, the second is a street mural from the same game; use them ONLY as style and palette references. Paint the FRONT FACADE of this house, a wall 7 m wide by 7 m tall (square). Ground floor: a wooden front door slightly off-centre and one window. Upper floor: two windows with shutters and a small balcony with iron railing. Windows are dark glass with a hint of warm interior, clearly framed."
+  },
+  "_meta": {
+   "title": "Encargo: frente 7x7"
+  }
+ },
+ "13": {
+  "class_type": "PrimitiveStringMultiline",
+  "inputs": {
+   "value": "The FIRST reference image is the approved FRONT facade of this exact house. Paint the SIDE FACADE of the SAME house, a wall 9 m wide by 7 m tall, facing the street: identical wall material, colours, window frames, shutters, plinth height, cornice and painting style, so both walls meet seamlessly at the corner. Three windows per floor evenly spaced, one drainpipe at the right corner, no door."
+  },
+  "_meta": {
+   "title": "Encargo: lateral 9x7"
+  }
+ },
+ "20": {
+  "class_type": "StringConcatenate",
+  "inputs": {
+   "string_a": [
+    "12",
+    0
+   ],
+   "string_b": [
+    "11",
+    0
+   ],
+   "delimiter": "\n"
+  }
+ },
+ "21": {
+  "class_type": "StringConcatenate",
+  "inputs": {
+   "string_a": [
+    "20",
+    0
+   ],
+   "string_b": [
+    "10",
+    0
+   ],
+   "delimiter": "\n\n"
+  },
+  "_meta": {
+   "title": "Prompt frente"
+  }
+ },
+ "22": {
+  "class_type": "StringConcatenate",
+  "inputs": {
+   "string_a": [
+    "13",
+    0
+   ],
+   "string_b": [
+    "11",
+    0
+   ],
+   "delimiter": "\n"
+  }
+ },
+ "23": {
+  "class_type": "StringConcatenate",
+  "inputs": {
+   "string_a": [
+    "22",
+    0
+   ],
+   "string_b": [
+    "10",
+    0
+   ],
+   "delimiter": "\n\n"
+  },
+  "_meta": {
+   "title": "Prompt lateral"
+  }
+ },
+ "30": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": [
+    "21",
+    0
+   ],
+   "model": "gemini-3-pro-image-preview",
+   "seed": 1101,
+   "aspect_ratio": "1:1",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "3",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "Nano Banana Pro · FRENTE"
+  }
+ },
+ "31": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "30",
+    0
+   ],
+   "filename_prefix": "deriva/house_front"
+  }
+ },
+ "41": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": [
+    "23",
+    0
+   ],
+   "model": "gemini-3-pro-image-preview",
+   "seed": 1102,
+   "aspect_ratio": "4:3",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "30",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "Nano Banana Pro · LATERAL"
+  }
+ },
+ "42": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "41",
+    0
+   ],
+   "filename_prefix": "deriva/house_side"
+  }
+ }
+}

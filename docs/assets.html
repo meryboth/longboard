@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Assets de Deriva</title>
+<meta name="description" content="Cómo se crearon los assets de Deriva con IA generativa: pipeline en ComfyUI con Nano Banana Pro, comparativa con modelos abiertos, prompts, posproceso y costos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="report.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top" aria-label="Reportes">
+  <a class="brand" href="index.html">◭ DERIVA</a>
+  <ul><li><a href="index.html">Caso de estudio</a></li><li><a href="escenarios.html">Escenarios</a></li><li><a href="assets.html" aria-current="page">Assets con IA</a></li><li><a href="https://github.com/meryboth/longboard">Código</a></li></ul>
+</nav>
+
+<header>
+  <span class="eyebrow">Reporte 2 de 2 · assets con IA generativa</span>
+  <h1>Pintar un pueblo con <em>un solo estilo.</em></h1>
+  <p class="lede">Todo el arte del escenario de Deriva (fachadas, iglesia, suelo, calles, pircas, vegetación y el panorama de fondo) se generó con IA en ComfyUI. El objetivo no era una imagen linda sino un set de assets de juego: texturas que calcen en volúmenes 3D, que compartan un estilo y que se puedan regenerar de forma controlada.</p>
+</header>
+
+<section>
+  <span class="eyebrow">Stack</span>
+  <h2>ComfyUI como línea de producción</h2>
+  <dl class="facts">
+    <div><dt>Orquestación</dt><dd>ComfyUI en Comfy Cloud, con workflows en formato API versionados en el repo.</dd></div>
+    <div><dt>Modelo de producción</dt><dd>Nano Banana Pro (Gemini 3 Pro Image), nodo <code>GeminiImage2Node</code>.</dd></div>
+    <div><dt>Recorte de sprites</dt><dd>BiRefNet dentro del mismo workflow.</dd></div>
+    <div><dt>Posproceso</dt><dd>ffmpeg: recorte automático, despill, extensión de cielo y exportación a JPG y WebP.</dd></div>
+  </dl>
+  <h3>El workflow de una fachada</h3>
+  <div class="flow" aria-label="Flujo del workflow de fachadas">
+    <div><small>Entrada</small><b>Ancla de estilo</b><span>El panorama del juego como referencia de imagen.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div class="key"><small>Nano Banana Pro</small><b>Frente</b><span>Prompt con la variante de casa. 16:9 = 8 × 4,5 m.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div class="key"><small>Nano Banana Pro</small><b>Lateral</b><span>Recibe el frente como referencia: misma casa, otra cara.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><small>ffmpeg</small><b>Recorte</b><span>cropdetect quita márgenes; escala a 1024 px.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><small>Three.js</small><b>InstancedMesh</b><span>Una malla por variante con frente y laterales.</span></div>
+  </div>
+  <h3>El workflow de una hoja de sprites</h3>
+  <div class="flow" aria-label="Flujo del workflow de sprites">
+    <div class="key"><small>Nano Banana Pro</small><b>Hoja 2 × 2</b><span>Cuatro plantas sobre fondo magenta, a 2K.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><small>ComfyUI</small><b>BiRefNet</b><span>RemoveBackground → InvertMask → JoinImageWithAlpha.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><small>ffmpeg</small><b>Despill</b><span>Quita el halo magenta de los bordes.</span></div>
+    <span class="arrow" aria-hidden="true">→</span>
+    <div><small>Three.js</small><b>Sprites</b><span>Cada celda se recorta a su área opaca y se ancla en la base.</span></div>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Prompts</span>
+  <h2>Un bloque fijo y una variante corta</h2>
+  <p>Cada prompt combina la variante (lo único que cambia entre casas) con un bloque fijo de tres partes: estilo, formato de textura y prohibiciones. El bloque fijo es lo que hace que los assets sean usables en el juego.</p>
+  <pre><code>HOUSE: ochre-yellow lime-washed adobe, a wide double wooden carriage door (portón)
+made of cardón wood, and one window with iron bars.
+
+FORMAT: a GAME TEXTURE for a 3D box: a perfectly flat orthographic elevation of ONE wall
+seen dead-on, zero perspective. The wall fills the ENTIRE frame edge to edge: left and
+right edges are the building corners, the bottom edge is the ground line with a low worn
+plinth, the top edge is the top of the parapet of a flat mud roof.
+FORBIDDEN: sky, roof seen from above, ground, street, people, animals, text, signs,
+numbers, plants in front of the wall, borders, cast shadows from outside objects.
+STYLE: match the hand-painted gouache technique, light and palette of the reference
+painting of the Quebrada de Humahuaca (Jujuy, Argentina).</code></pre>
+  <div class="notes">
+    <p class="note"><b>Borde a borde.</b> Los bordes de la imagen tienen que ser las esquinas del edificio; si no, la textura deja una franja de cielo en el juego.</p>
+    <p class="note"><b>Luz pareja.</b> Nada de sombras proyectadas: la luz y las sombras las pone Three.js, que además cambia entre tarde, lila y noche.</p>
+    <p class="note"><b>Lateral encadenado.</b> "The reference image is the approved FRONT facade of this exact house": así el lateral repite material, zócalo y parapeto.</p>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Ancla de estilo</span>
+  <h2>Primero el panorama, después todo lo demás</h2>
+  <figure><img src="img/jujuy/panorama.jpg" alt="Panorama de la Quebrada de Humahuaca pintado con IA" width="1600" height="679" loading="lazy"><figcaption>Generado primero, en 21:9 y 4K. El panorama anterior de Valparaíso entró solo como referencia de técnica, con la instrucción de no copiar su contenido. Las 20 imágenes siguientes lo recibieron como referencia.</figcaption></figure>
+</section>
+
+<section>
+  <span class="eyebrow">Resultado</span>
+  <h2>Casas de adobe</h2>
+  <div class="set" id="jset"></div>
+  <h3>Iglesia</h3>
+  <div class="church">
+    <img src="img/jujuy/church-front.jpg" alt="Frente de iglesia de adobe con puerta de cardón" width="520" height="388" loading="lazy">
+    <img src="img/jujuy/church-side.jpg" alt="Lateral de la nave con contrafuertes" width="520" height="220" loading="lazy">
+    <img src="img/jujuy/church-tower.jpg" alt="Cara del campanario con campana" width="520" height="932" loading="lazy">
+  </div>
+  <p class="cap">Frente 4:3, lateral 21:9 y torre 9:16, encadenados desde el frente.</p>
+  <h3>Entorno</h3>
+  <div class="grid3">
+    <figure><img src="img/jujuy/ground.jpg" alt="Suelo seco con ichu" width="420" height="420" loading="lazy"><figcaption>Suelo de valle que se repite sin costuras.</figcaption></figure>
+    <figure><div class="checker"><img src="img/jujuy/trees.webp" alt="Cardón, álamo, algarrobo y molle recortados" width="900" height="900" loading="lazy"></div><figcaption>Cardón, álamo, algarrobo y molle.</figcaption></figure>
+    <figure><div class="checker"><img src="img/jujuy/shrubs.webp" alt="Tola, ichu, rocas y cardón joven recortados" width="900" height="900" loading="lazy"></div><figcaption>Tola, ichu, rocas y cardón joven.</figcaption></figure>
+  </div>
+  <figure><img src="img/jujuy/pirca.jpg" alt="Textura de pirca de piedra seca" width="900" height="382" loading="lazy"><figcaption>Pirca en 21:9, repetida cada 3,1 m sobre los muros de la cuesta.</figcaption></figure>
+</section>
+
+<section>
+  <span class="eyebrow">Comparativa</span>
+  <h2>Nano Banana Pro contra tres modelos abiertos</h2>
+  <p>Mismo encargo, mismas referencias y mismas semillas, con dos variantes de la etapa Valparaíso. Los modelos abiertos corrieron en la misma cuenta de Comfy Cloud, con sus ajustes recomendados.</p>
+  <div class="toggle" role="group" aria-label="Variante">
+    <button id="show-b" aria-pressed="true" data-v="b">Variante b · ocre</button>
+    <button id="show-c" aria-pressed="false" data-v="c">Variante c · terracota</button>
+  </div>
+  <div class="matrix" id="matrix">
+    <div class="row">
+      <div class="model"><b>Nano Banana Pro</b><small>Gemini 3 Pro Image · API</small>
+        <p class="note good" data-b="Borde a borde, zócalo y cornisa donde se pidieron. El lateral repite postigos y ventanas." data-c="Mantiene la puerta teal y los parches del revoque en las dos caras.">Borde a borde, zócalo y cornisa donde se pidieron. El lateral repite postigos y ventanas.</p></div>
+      <img data-src="img/cmp/nb-{v}-front.jpg" src="img/cmp/nb-b-front.jpg" alt="Nano Banana Pro, frente" width="520" height="520" loading="lazy">
+      <img data-src="img/cmp/nb-{v}-side.jpg" src="img/cmp/nb-b-side.jpg" alt="Nano Banana Pro, lateral" width="520" height="388" loading="lazy">
+    </div>
+    <div class="row">
+      <div class="model"><b>Flux.2 Dev</b><small>Pesos abiertos · multi-referencia</small>
+        <p class="note bad" data-b="Pincelada cercana a la del juego. Márgenes blancos a los costados: hay que recortar." data-c="Buena coherencia entre caras, pero el lateral agregó una puerta que el encargo prohibía.">Pincelada cercana a la del juego. Márgenes blancos a los costados: hay que recortar.</p></div>
+      <img data-src="img/cmp/flux2-{v}-front.jpg" src="img/cmp/flux2-b-front.jpg" alt="Flux.2 Dev, frente" width="520" height="520" loading="lazy">
+      <img data-src="img/cmp/flux2-{v}-side.jpg" src="img/cmp/flux2-b-side.jpg" alt="Flux.2 Dev, lateral" width="520" height="386" loading="lazy">
+    </div>
+    <div class="row">
+      <div class="model"><b>Qwen-Image-Edit 2511</b><small>Pesos abiertos · Apache 2.0</small>
+        <p class="note bad" data-b="Llena el cuadro, pero el color es plano y el lateral quedó con tres ventanas y mucha pared vacía." data-c="Lateral con puerta y balcón: copió el frente en lugar de pintar la cara larga.">Llena el cuadro, pero el color es plano y el lateral quedó con tres ventanas y mucha pared vacía.</p></div>
+      <img data-src="img/cmp/qwen-{v}-front.jpg" src="img/cmp/qwen-b-front.jpg" alt="Qwen-Image-Edit, frente" width="520" height="520" loading="lazy">
+      <img data-src="img/cmp/qwen-{v}-side.jpg" src="img/cmp/qwen-b-side.jpg" alt="Qwen-Image-Edit, lateral" width="520" height="386" loading="lazy">
+    </div>
+    <div class="row">
+      <div class="model"><b>Z-Image Turbo</b><small>Pesos abiertos · solo texto</small>
+        <p class="note bad" data-b="Pinta una escena: cielo, vereda, casas vecinas. Inservible como textura sin recorte manual." data-c="Mismo problema; sin referencia, frente y lateral parecen casas distintas.">Pinta una escena: cielo, vereda, casas vecinas. Inservible como textura sin recorte manual.</p></div>
+      <img data-src="img/cmp/zimage-{v}-front.jpg" src="img/cmp/zimage-b-front.jpg" alt="Z-Image Turbo, frente" width="520" height="520" loading="lazy">
+      <img data-src="img/cmp/zimage-{v}-side.jpg" src="img/cmp/zimage-b-side.jpg" alt="Z-Image Turbo, lateral" width="520" height="386" loading="lazy">
+    </div>
+  </div>
+  <div class="tablebox">
+  <table>
+    <thead><tr><th>Modelo</th><th>Borde a borde</th><th>Estilo</th><th>Frente ↔ lateral</th><th>Sigue el encargo</th><th>Costo por casa</th><th>Licencia</th></tr></thead>
+    <tbody>
+      <tr><th>Nano Banana Pro</th><td><span class="dots" data-n="5"></span></td><td><span class="dots" data-n="5"></span></td><td><span class="dots" data-n="5"></span></td><td><span class="dots" data-n="4"></span></td><td class="num">≈71 créditos</td><td>API de Google</td></tr>
+      <tr><th>Flux.2 Dev</th><td><span class="dots" data-n="3"></span></td><td><span class="dots" data-n="4"></span></td><td><span class="dots" data-n="4"></span></td><td><span class="dots" data-n="3"></span></td><td class="num">75 s de GPU</td><td>No comercial (dev)</td></tr>
+      <tr><th>Qwen-Image-Edit 2511</th><td><span class="dots" data-n="4"></span></td><td><span class="dots" data-n="3"></span></td><td><span class="dots" data-n="3"></span></td><td><span class="dots" data-n="2"></span></td><td class="num">74 s de GPU</td><td>Apache 2.0</td></tr>
+      <tr><th>Z-Image Turbo</th><td><span class="dots" data-n="1"></span></td><td><span class="dots" data-n="2"></span></td><td><span class="dots" data-n="2"></span></td><td><span class="dots" data-n="2"></span></td><td class="num">6 s de GPU</td><td>Apache 2.0</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Veredicto: Nano Banana Pro para producción. Flux.2 Dev es la alternativa abierta viable si se le suma un recorte automático de márgenes. Los modelos sin referencia de imagen no mantienen la coherencia entre las caras de una misma casa.</p>
+</section>
+
+<section>
+  <span class="eyebrow">Posproceso</span>
+  <h2>Arreglar sin regenerar</h2>
+  <p>Cada imagen regenerada cuesta créditos y puede romper algo que ya estaba bien. Los defectos chicos se resolvieron con ffmpeg, de forma determinista.</p>
+  <div class="notes">
+    <p class="note bad"><b>Márgenes blancos</b> en 3 de 6 casas de adobe. Recorte automático detectando el borde sobre la imagen invertida:</p>
+    <p class="note bad"><b>Halo magenta</b> en los recortes de BiRefNet. Despill que baja rojo y azul donde superan al verde por más de 50.</p>
+    <p class="note bad"><b>Encuadre alto</b> del panorama. Cielo extendido estirando las 20 filas superiores y suavizándolas.</p>
+  </div>
+  <pre><code># Márgenes: detectar el borde claro y recortar
+ffmpeg -i casa.png -vf "negate,cropdetect=limit=0.1:skip=0" -f null -
+ffmpeg -i casa.png -vf "crop=1206:594:86:90,scale=1024:576" casa.jpg
+
+# Halo magenta: despill por canal
+geq=r='r(X,Y)-if(gt(min(r(X,Y),b(X,Y))-g(X,Y),50),min(r(X,Y),b(X,Y))-g(X,Y),0)':g='g(X,Y)':b='…':a='alpha(X,Y)'
+
+# Cielo: estirar la franja superior y apilarla arriba
+[0]split[a][b];[a]crop=iw:20:0:0,scale=4096:766,gblur=sigma=6[sky];[sky][b]vstack</code></pre>
+</section>
+
+<section>
+  <span class="eyebrow">Archivo</span>
+  <h2>La primera dirección de arte: Valparaíso</h2>
+  <p>Antes de Jujuy el juego tuvo una ciudad inspirada en Valparaíso, con ocho fachadas de chapa y estuco, un panorama de bahía y un mural. Ese trabajo definió el método y quedó en el repo como archivo.</p>
+  <div class="valpo" id="valpo"></div>
+  <div class="pair">
+    <figure><img src="img/env/valparaiso-panorama.jpg" alt="Panorama de una ciudad sobre cerros frente a una bahía" width="1400" height="467" loading="lazy"><figcaption>Panorama de la primera etapa.</figcaption></figure>
+    <figure><img src="img/env/mural.jpg" alt="Mural con garzas y flores" width="1000" height="333" loading="lazy"><figcaption>Mural de los muros de la ruta.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Bitácora</span>
+  <h2>Qué se generó y cuánto costó</h2>
+  <div class="tablebox">
+  <table>
+    <thead><tr><th>Ronda</th><th>Qué</th><th>Modelo</th><th>Imágenes</th><th>Créditos</th><th>GPU</th><th>Qué falló</th></tr></thead>
+    <tbody>
+      <tr><th>1</th><td>Primera casa (frente + lateral)</td><td>Nano Banana Pro</td><td class="num">2</td><td class="num">71</td><td class="num">—</td><td>Nada: borde a borde a la primera.</td></tr>
+      <tr><th>2</th><td>Siete casas, suelo, árboles, arbustos</td><td>Nano Banana Pro + BiRefNet</td><td class="num">17</td><td class="num">605</td><td class="num">73 s</td><td>Marco en una casa; halo magenta; buganvilla magenta sobre fondo magenta.</td></tr>
+      <tr><th>2</th><td>Comparativa</td><td>Flux.2 Dev, Qwen-Image-Edit 2511, Z-Image Turbo</td><td class="num">12</td><td class="num">—</td><td class="num">313 s</td><td>Márgenes, puertas prohibidas, vistas en perspectiva.</td></tr>
+      <tr><th>4</th><td>Panorama de la Quebrada (4K)</td><td>Nano Banana Pro</td><td class="num">1</td><td class="num">62</td><td class="num">—</td><td>Encuadre alto, corregido en posproceso.</td></tr>
+      <tr><th>4</th><td>6 casas, iglesia, suelo, calle, pirca, vegetación</td><td>Nano Banana Pro + BiRefNet</td><td class="num">20</td><td class="num">706</td><td class="num">71 s</td><td>Márgenes en 3 casas; algarrobo cortado.</td></tr>
+    </tbody>
+    <tfoot><tr><th>Total</th><td></td><td></td><td class="num">52</td><td class="num">≈1.444</td><td class="num">≈457 s</td><td></td></tr></tfoot>
+  </table>
+  </div>
+  <p class="cap">Datos del registro de facturación de Comfy Cloud. Nano Banana Pro costó ≈35,4 créditos por imagen a 1K y 2K, y 62 a 4K. GPU: RTX Pro 6000.</p>
+</section>
+
+<section>
+  <span class="eyebrow">Lecciones</span>
+  <h2>Lo que queda para el próximo proyecto</h2>
+  <div class="notes">
+    <p class="note">Encadenar frente → lateral en el mismo workflow es lo que da coherencia entre las caras de una casa.</p>
+    <p class="note">Un ancla de estilo generada primero vale más que referencias viejas de otra dirección de arte.</p>
+    <p class="note">El fondo de una hoja de sprites no puede compartir color con ninguno de sus elementos.</p>
+    <p class="note">El posproceso determinista (recorte, despill, estirar el cielo) ahorra créditos y evita perder lo que ya estaba bien.</p>
+    <p class="note">Guardar cada workflow como archivo en el repo hace que el arte sea reproducible y revisable como el código.</p>
+    <p class="note">Antes de generar más texturas, revisar la geometría: la trama urbana cambió la lectura más que 20 imágenes.</p>
+  </div>
+</section>
+
+<footer>
+  <span>Workflows en <code>art/*/comfyui/</code>, generados por <code>art/comfyui-gen.mjs</code> y <code>art/comfyui-jujuy.mjs</code>. Bitácora completa en <code>art/GENAI-LOG.md</code>, en <a href="https://github.com/meryboth/longboard">github.com/meryboth/longboard</a>.</span>
+  <span>Lectura anterior: <a href="escenarios.html">cómo se construyeron los escenarios</a>.</span>
+</footer>
+</div>
+<script>
+const jujuy={j1:'blanqueada con adobe a la vista',j2:'adobe sin revocar',j3:'ocre con portón de cardón',j4:'salmón con almacén',j5:'terracota con zócalo crema',j6:'blanca con zócalo de piedra'};
+document.getElementById('jset').innerHTML=Object.entries(jujuy).map(([id,name])=>`<div class="house"><img src="img/jujuy/${id}-front.jpg" alt="Casa ${id}, frente" width="420" height="236" loading="lazy"><img src="img/jujuy/${id}-side.jpg" alt="Casa ${id}, lateral" width="420" height="236" loading="lazy"><p><b>${id}</b> · ${name}</p></div>`).join('');
+document.getElementById('valpo').innerHTML='abcdefgh'.split('').map(id=>`<img src="img/set/house-${id}-front.jpg" alt="Fachada ${id} de la etapa Valparaíso" width="380" height="380" loading="lazy">`).join('');
+document.querySelectorAll('.dots').forEach(d=>{const n=+d.dataset.n;d.setAttribute('aria-label',n+' de 5');d.innerHTML=Array.from({length:5},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('');});
+const buttons=document.querySelectorAll('.toggle button');
+buttons.forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.v;
+  buttons.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  document.querySelectorAll('#matrix img').forEach(img=>img.src=img.dataset.src.replace('{v}',v));
+  document.querySelectorAll('#matrix .note').forEach(p=>p.textContent=p.dataset[v]);}));
+</script>
+</body>
+</html>

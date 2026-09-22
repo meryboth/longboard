@@ -1,0 +1,10 @@
+{"houses":[
+ {"id":"j1","front":"house-j1-front.jpg","side":"house-j1-side.jpg"},
+ {"id":"j2","front":"house-j2-front.jpg","side":"house-j2-side.jpg"},
+ {"id":"j3","front":"house-j3-front.jpg","side":"house-j3-side.jpg"},
+ {"id":"j4","front":"house-j4-front.jpg","side":"house-j4-side.jpg"},
+ {"id":"j5","front":"house-j5-front.jpg","side":"house-j5-side.jpg"},
+ {"id":"j6","front":"house-j6-front.jpg","side":"house-j6-side.jpg"}
+],
+"church":{"front":"church-front.jpg","side":"church-side.jpg","tower":"church-tower.jpg"},
+"street":"street.jpg"}

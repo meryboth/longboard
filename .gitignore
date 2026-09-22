@@ -1,3 +1,8 @@
 .sites-runtime/
 node_modules/
 *.zip
+.claude/
+.openai/
+# Originales PNG de las generaciones: pesan ~128 MB. En dist/assets están las versiones optimizadas.
+art/**/source/
+*.blend1

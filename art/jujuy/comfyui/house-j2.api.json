@@ -1,0 +1,61 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "2b910e004211af4efc5d2d9e69196f141d9515943793ea99992046247a08761c.png"
+  },
+  "_meta": {
+   "title": "Ref: panorama Quebrada"
+  }
+ },
+ "10": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "Paint the FRONT (street) facade of a traditional one-storey adobe house from a Quebrada de Humahuaca town (Purmamarca, Tilcara, Humahuaca), built right on the street line. The wall is 8 m wide and 4.5 m tall. HOUSE: bare unplastered adobe mud-brick walls in warm earth tones, a weathered green wooden door and a small window under a lintel of cardón cactus wood.\nFORMAT: a GAME TEXTURE for a 3D box: a perfectly flat orthographic elevation of ONE wall seen dead-on, zero perspective. The wall fills the ENTIRE frame edge to edge: left and right edges are the building corners, the bottom edge is the ground line with a low worn plinth, the top edge is the top of the parapet of a flat mud roof. FORBIDDEN: sky, roof seen from above, ground, street, people, animals, text, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even soft light, subtle ambient occlusion in the openings.\nSTYLE: match the hand-painted gouache technique, light and palette of the reference painting of the Quebrada de Humahuaca (Jujuy, Argentina): warm golden afternoon light, soft visible brush texture, earthy adobe tones.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 4120,
+   "aspect_ratio": "16:9",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "1",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_j2_front"
+  }
+ },
+ "20": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "The reference image is the approved FRONT facade of this exact house. Paint its SIDE wall (medianera), also 8 m wide and 4.5 m tall: identical adobe material, colour, plinth, parapet and painting style, so both walls meet at the corner. Mostly plain wall with one small deep-set window with a wooden frame, subtle cracks and patches of bare adobe bricks. No door.\nFORMAT: a GAME TEXTURE for a 3D box: a perfectly flat orthographic elevation of ONE wall seen dead-on, zero perspective. The wall fills the ENTIRE frame edge to edge: left and right edges are the building corners, the bottom edge is the ground line with a low worn plinth, the top edge is the top of the parapet of a flat mud roof. FORBIDDEN: sky, roof seen from above, ground, street, people, animals, text, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even soft light, subtle ambient occlusion in the openings.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 4121,
+   "aspect_ratio": "16:9",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "10",
+    0
+   ]
+  }
+ },
+ "21": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "20",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_j2_side"
+  }
+ }
+}

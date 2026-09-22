@@ -1,0 +1,360 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "flux2_dev_fp8mixed.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "2": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+   "type": "flux2"
+  }
+ },
+ "3": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "flux2-vae.safetensors"
+  }
+ },
+ "4": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "fcf7faee0ce3266e4dbf08df86a02d06652326f7fdc721fff1d7a6aa8b0c7454.png"
+  }
+ },
+ "5": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "dafbaafa56bfbec06371db651a9fe1ba0b070331d1f95e4c06dc05d3277493d6.png"
+  }
+ },
+ "6": {
+  "class_type": "ImageScaleToTotalPixels",
+  "inputs": {
+   "image": [
+    "4",
+    0
+   ],
+   "upscale_method": "lanczos",
+   "megapixels": 1,
+   "resolution_steps": 1
+  }
+ },
+ "7": {
+  "class_type": "ImageScaleToTotalPixels",
+  "inputs": {
+   "image": [
+    "5",
+    0
+   ],
+   "upscale_method": "lanczos",
+   "megapixels": 1,
+   "resolution_steps": 1
+  }
+ },
+ "8": {
+  "class_type": "VAEEncode",
+  "inputs": {
+   "pixels": [
+    "6",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "9": {
+  "class_type": "VAEEncode",
+  "inputs": {
+   "pixels": [
+    "7",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "16": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "20": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "text": "Paint the FRONT FACADE of this house, a wall 7 m wide by 7 m tall (square). Ground floor: a wooden front door slightly off-centre and one window. Upper floor: two windows with shutters and a small balcony with iron railing. Windows are dark glass with a hint of warm interior, clearly framed.\n\nHOUSE: stucco walls painted warm ochre yellow, white window trim, green wooden shutters, weathered patches of bare plaster.\n\nThe reference images are the painted city panorama and a street mural from our game: match their painting style and palette only, do not copy their content.\n\nSTYLE: warm golden-hour painterly gouache illustration, soft visible brush texture, gentle weathering, palette of teal, terracotta, cream, ochre and muted pastels. Inspired by the hillside houses of Valparaiso, but fictional.\nFORMAT: a GAME TEXTURE for a 3D box. A perfectly flat orthographic elevation of ONE wall, seen dead-on, zero perspective, no depth. The wall fills the ENTIRE frame edge to edge: left and right image edges are the building corners, the bottom edge is the ground line with a thin weathered stone plinth, the top edge is the eave with a simple cornice. Two storeys.\nFORBIDDEN: sky, roof, ground, street, people, animals, vehicles, text, letters, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even, soft, shadowless lighting; only subtle ambient occlusion inside window recesses.",
+   "clip": [
+    "2",
+    0
+   ]
+  }
+ },
+ "21": {
+  "class_type": "FluxGuidance",
+  "inputs": {
+   "conditioning": [
+    "20",
+    0
+   ],
+   "guidance": 4
+  }
+ },
+ "22": {
+  "class_type": "ReferenceLatent",
+  "inputs": {
+   "conditioning": [
+    "21",
+    0
+   ],
+   "latent": [
+    "8",
+    0
+   ]
+  }
+ },
+ "23": {
+  "class_type": "ReferenceLatent",
+  "inputs": {
+   "conditioning": [
+    "22",
+    0
+   ],
+   "latent": [
+    "9",
+    0
+   ]
+  }
+ },
+ "25": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "conditioning": [
+    "23",
+    0
+   ]
+  }
+ },
+ "26": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 1201
+  }
+ },
+ "27": {
+  "class_type": "Flux2Scheduler",
+  "inputs": {
+   "steps": 20,
+   "width": 1024,
+   "height": 1024
+  }
+ },
+ "28": {
+  "class_type": "EmptyFlux2LatentImage",
+  "inputs": {
+   "width": 1024,
+   "height": 1024,
+   "batch_size": 1
+  }
+ },
+ "29": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "26",
+    0
+   ],
+   "guider": [
+    "25",
+    0
+   ],
+   "sampler": [
+    "16",
+    0
+   ],
+   "sigmas": [
+    "27",
+    0
+   ],
+   "latent_image": [
+    "28",
+    0
+   ]
+  }
+ },
+ "30": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "29",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "31": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "30",
+    0
+   ],
+   "filename_prefix": "deriva/flux2_house_b_front"
+  }
+ },
+ "40": {
+  "class_type": "ImageScaleToTotalPixels",
+  "inputs": {
+   "image": [
+    "30",
+    0
+   ],
+   "upscale_method": "lanczos",
+   "megapixels": 1,
+   "resolution_steps": 1
+  }
+ },
+ "41": {
+  "class_type": "VAEEncode",
+  "inputs": {
+   "pixels": [
+    "40",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "50": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "text": "The reference image is the approved FRONT facade of this exact house. Paint the SIDE FACADE of the SAME house, a wall 9 m wide by 7 m tall, facing the street: identical wall material, colours, window frames, shutters, plinth, cornice and painting style, so both walls meet seamlessly at the corner. Three windows per floor evenly spaced, one drainpipe at the right corner, no door.\n\nHOUSE: stucco walls painted warm ochre yellow, white window trim, green wooden shutters, weathered patches of bare plaster.\n\nSTYLE: warm golden-hour painterly gouache illustration, soft visible brush texture, gentle weathering, palette of teal, terracotta, cream, ochre and muted pastels. Inspired by the hillside houses of Valparaiso, but fictional.\nFORMAT: a GAME TEXTURE for a 3D box. A perfectly flat orthographic elevation of ONE wall, seen dead-on, zero perspective, no depth. The wall fills the ENTIRE frame edge to edge: left and right image edges are the building corners, the bottom edge is the ground line with a thin weathered stone plinth, the top edge is the eave with a simple cornice. Two storeys.\nFORBIDDEN: sky, roof, ground, street, people, animals, vehicles, text, letters, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even, soft, shadowless lighting; only subtle ambient occlusion inside window recesses.",
+   "clip": [
+    "2",
+    0
+   ]
+  }
+ },
+ "51": {
+  "class_type": "FluxGuidance",
+  "inputs": {
+   "conditioning": [
+    "50",
+    0
+   ],
+   "guidance": 4
+  }
+ },
+ "52": {
+  "class_type": "ReferenceLatent",
+  "inputs": {
+   "conditioning": [
+    "51",
+    0
+   ],
+   "latent": [
+    "41",
+    0
+   ]
+  }
+ },
+ "55": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "conditioning": [
+    "52",
+    0
+   ]
+  }
+ },
+ "56": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 1202
+  }
+ },
+ "57": {
+  "class_type": "Flux2Scheduler",
+  "inputs": {
+   "steps": 20,
+   "width": 1184,
+   "height": 880
+  }
+ },
+ "58": {
+  "class_type": "EmptyFlux2LatentImage",
+  "inputs": {
+   "width": 1184,
+   "height": 880,
+   "batch_size": 1
+  }
+ },
+ "59": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "56",
+    0
+   ],
+   "guider": [
+    "55",
+    0
+   ],
+   "sampler": [
+    "16",
+    0
+   ],
+   "sigmas": [
+    "57",
+    0
+   ],
+   "latent_image": [
+    "58",
+    0
+   ]
+  }
+ },
+ "60": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "59",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "61": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "60",
+    0
+   ],
+   "filename_prefix": "deriva/flux2_house_b_side"
+  }
+ }
+}

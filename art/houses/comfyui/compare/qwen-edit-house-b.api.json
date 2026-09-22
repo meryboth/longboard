@@ -1,0 +1,240 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "qwen_image_edit_2511_fp8mixed.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "2": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+   "type": "qwen_image"
+  }
+ },
+ "3": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "qwen_image_vae.safetensors"
+  }
+ },
+ "4": {
+  "class_type": "ModelSamplingAuraFlow",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "shift": 3.1
+  }
+ },
+ "6": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "fcf7faee0ce3266e4dbf08df86a02d06652326f7fdc721fff1d7a6aa8b0c7454.png"
+  }
+ },
+ "7": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "dafbaafa56bfbec06371db651a9fe1ba0b070331d1f95e4c06dc05d3277493d6.png"
+  }
+ },
+ "10": {
+  "class_type": "TextEncodeQwenImageEditPlus",
+  "inputs": {
+   "clip": [
+    "2",
+    0
+   ],
+   "prompt": "Paint the FRONT FACADE of this house, a wall 7 m wide by 7 m tall (square). Ground floor: a wooden front door slightly off-centre and one window. Upper floor: two windows with shutters and a small balcony with iron railing. Windows are dark glass with a hint of warm interior, clearly framed.\n\nHOUSE: stucco walls painted warm ochre yellow, white window trim, green wooden shutters, weathered patches of bare plaster.\n\nThe reference images are the painted city panorama and a street mural from our game: match their painting style and palette only, do not copy their content.\n\nSTYLE: warm golden-hour painterly gouache illustration, soft visible brush texture, gentle weathering, palette of teal, terracotta, cream, ochre and muted pastels. Inspired by the hillside houses of Valparaiso, but fictional.\nFORMAT: a GAME TEXTURE for a 3D box. A perfectly flat orthographic elevation of ONE wall, seen dead-on, zero perspective, no depth. The wall fills the ENTIRE frame edge to edge: left and right image edges are the building corners, the bottom edge is the ground line with a thin weathered stone plinth, the top edge is the eave with a simple cornice. Two storeys.\nFORBIDDEN: sky, roof, ground, street, people, animals, vehicles, text, letters, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even, soft, shadowless lighting; only subtle ambient occlusion inside window recesses.",
+   "vae": [
+    "3",
+    0
+   ],
+   "image1": [
+    "6",
+    0
+   ],
+   "image2": [
+    "7",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "TextEncodeQwenImageEditPlus",
+  "inputs": {
+   "clip": [
+    "2",
+    0
+   ],
+   "prompt": "perspective, vanishing point, sky, roof, street, ground, people, text, letters, watermark, blurry, photo",
+   "vae": [
+    "3",
+    0
+   ],
+   "image1": [
+    "6",
+    0
+   ],
+   "image2": [
+    "7",
+    0
+   ]
+  }
+ },
+ "12": {
+  "class_type": "EmptySD3LatentImage",
+  "inputs": {
+   "width": 1024,
+   "height": 1024,
+   "batch_size": 1
+  }
+ },
+ "13": {
+  "class_type": "KSampler",
+  "inputs": {
+   "model": [
+    "4",
+    0
+   ],
+   "seed": 1201,
+   "steps": 20,
+   "cfg": 2.5,
+   "sampler_name": "euler",
+   "scheduler": "simple",
+   "positive": [
+    "10",
+    0
+   ],
+   "negative": [
+    "11",
+    0
+   ],
+   "latent_image": [
+    "12",
+    0
+   ],
+   "denoise": 1
+  }
+ },
+ "14": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "13",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "15": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "14",
+    0
+   ],
+   "filename_prefix": "deriva/qwen_house_b_front"
+  }
+ },
+ "30": {
+  "class_type": "TextEncodeQwenImageEditPlus",
+  "inputs": {
+   "clip": [
+    "2",
+    0
+   ],
+   "prompt": "The reference image is the approved FRONT facade of this exact house. Paint the SIDE FACADE of the SAME house, a wall 9 m wide by 7 m tall, facing the street: identical wall material, colours, window frames, shutters, plinth, cornice and painting style, so both walls meet seamlessly at the corner. Three windows per floor evenly spaced, one drainpipe at the right corner, no door.\n\nHOUSE: stucco walls painted warm ochre yellow, white window trim, green wooden shutters, weathered patches of bare plaster.\n\nSTYLE: warm golden-hour painterly gouache illustration, soft visible brush texture, gentle weathering, palette of teal, terracotta, cream, ochre and muted pastels. Inspired by the hillside houses of Valparaiso, but fictional.\nFORMAT: a GAME TEXTURE for a 3D box. A perfectly flat orthographic elevation of ONE wall, seen dead-on, zero perspective, no depth. The wall fills the ENTIRE frame edge to edge: left and right image edges are the building corners, the bottom edge is the ground line with a thin weathered stone plinth, the top edge is the eave with a simple cornice. Two storeys.\nFORBIDDEN: sky, roof, ground, street, people, animals, vehicles, text, letters, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even, soft, shadowless lighting; only subtle ambient occlusion inside window recesses.",
+   "vae": [
+    "3",
+    0
+   ],
+   "image1": [
+    "14",
+    0
+   ]
+  }
+ },
+ "31": {
+  "class_type": "TextEncodeQwenImageEditPlus",
+  "inputs": {
+   "clip": [
+    "2",
+    0
+   ],
+   "prompt": "perspective, vanishing point, sky, roof, street, ground, people, text, letters, watermark, blurry, photo",
+   "vae": [
+    "3",
+    0
+   ],
+   "image1": [
+    "14",
+    0
+   ]
+  }
+ },
+ "32": {
+  "class_type": "EmptySD3LatentImage",
+  "inputs": {
+   "width": 1184,
+   "height": 880,
+   "batch_size": 1
+  }
+ },
+ "33": {
+  "class_type": "KSampler",
+  "inputs": {
+   "model": [
+    "4",
+    0
+   ],
+   "seed": 1202,
+   "steps": 20,
+   "cfg": 2.5,
+   "sampler_name": "euler",
+   "scheduler": "simple",
+   "positive": [
+    "30",
+    0
+   ],
+   "negative": [
+    "31",
+    0
+   ],
+   "latent_image": [
+    "32",
+    0
+   ],
+   "denoise": 1
+  }
+ },
+ "34": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "33",
+    0
+   ],
+   "vae": [
+    "3",
+    0
+   ]
+  }
+ },
+ "35": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "34",
+    0
+   ],
+   "filename_prefix": "deriva/qwen_house_b_side"
+  }
+ }
+}

@@ -1,0 +1,36 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "2b910e004211af4efc5d2d9e69196f141d9515943793ea99992046247a08761c.png"
+  },
+  "_meta": {
+   "title": "Ref: panorama Quebrada"
+  }
+ },
+ "10": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "A SEAMLESS TILEABLE texture seen straight from above (top-down, orthographic), uniform density everywhere, no focal point, no large objects, no shadows of objects, even flat lighting; the left edge continues seamlessly into the right edge and the top into the bottom. Compacted dirt street of a small Jujuy town: light beige-ochre packed earth with fine gravel and a few small stones, very subtle. STYLE: match the hand-painted gouache technique, light and palette of the reference painting of the Quebrada de Humahuaca (Jujuy, Argentina): warm golden afternoon light, soft visible brush texture, earthy adobe tones.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 4401,
+   "aspect_ratio": "1:1",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "1",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_street"
+  }
+ }
+}

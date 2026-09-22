@@ -1,0 +1,55 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "fcf7faee0ce3266e4dbf08df86a02d06652326f7fdc721fff1d7a6aa8b0c7454.png"
+  }
+ },
+ "2": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "dafbaafa56bfbec06371db651a9fe1ba0b070331d1f95e4c06dc05d3277493d6.png"
+  }
+ },
+ "3": {
+  "class_type": "BatchImagesNode",
+  "inputs": {
+   "images.image0": [
+    "1",
+    0
+   ],
+   "images.image1": [
+    "2",
+    0
+   ]
+  }
+ },
+ "10": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "A SEAMLESS TILEABLE texture seen straight from above (top-down, orthographic): dry Mediterranean hillside ground with short sun-bleached grass, small clumps of green grass, tiny yellow and white wildflowers, and a few patches of warm ochre dirt and pebbles. Uniform density everywhere, no focal point, no large objects, no shadows of objects, even flat lighting. The left edge must continue seamlessly into the right edge and the top into the bottom. Match the painting style and palette of the reference images (painted city panorama and street mural from our game): warm golden-hour painterly gouache, soft brush texture, teal, olive, ochre, terracotta and cream.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 2101,
+   "aspect_ratio": "1:1",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "3",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "Nano Banana Pro · ground"
+  }
+ },
+ "11": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "filename_prefix": "deriva/env_ground"
+  }
+ }
+}

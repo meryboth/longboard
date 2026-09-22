@@ -1,0 +1,10 @@
+{"variants":[
+ {"id":"a","front":"house-a-front.jpg","side":"house-a-side.jpg","roof":"#8f5f4b"},
+ {"id":"b","front":"house-b-front.jpg","side":"house-b-side.jpg","roof":"#9a6149"},
+ {"id":"c","front":"house-c-front.jpg","side":"house-c-side.jpg","roof":"#7d5a4a"},
+ {"id":"d","front":"house-d-front.jpg","side":"house-d-side.jpg","roof":"#8a5a4e"},
+ {"id":"e","front":"house-e-front.jpg","side":"house-e-side.jpg","roof":"#6f7a78"},
+ {"id":"f","front":"house-f-front.jpg","side":"house-f-side.jpg","roof":"#7b6a52"},
+ {"id":"g","front":"house-g-front.jpg","side":"house-g-side.jpg","roof":"#6e6a78"},
+ {"id":"h","front":"house-h-front.jpg","side":"house-h-side.jpg","roof":"#5e6470"}
+]}

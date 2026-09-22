@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deriva · caso de estudio</title>
+<meta name="description" content="Cómo se construyó Deriva, un juego de longboard en Three.js con escenarios de la Quebrada de Humahuaca y arte pintado con IA generativa en ComfyUI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="report.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top" aria-label="Reportes">
+  <a class="brand" href="index.html">◭ DERIVA</a>
+  <ul><li><a href="index.html" aria-current="page">Caso de estudio</a></li><li><a href="escenarios.html">Escenarios</a></li><li><a href="assets.html">Assets con IA</a></li><li><a href="https://github.com/meryboth/longboard">Código</a></li></ul>
+</nav>
+
+<header>
+  <span class="eyebrow">Juego web · Three.js · IA generativa con ComfyUI</span>
+  <h1>Bajar la cuesta hasta <em>el pueblo.</em></h1>
+  <p class="lede">Deriva es un juego de longboard en el navegador: 2,4 km de bajada con carving, conos y coleccionables. Este caso documenta cómo el escenario pasó de un prototipo de cajas grises a un pueblo de la Quebrada de Humahuaca, con todo el arte pintado por IA generativa y una trama urbana construida en código.</p>
+</header>
+
+<section>
+  <div class="pair">
+    <figure><span class="tag">Antes</span><img src="img/antes.jpg" alt="Prototipo original: casas en forma de caja, murales procedurales y ciudad genérica" width="1280" height="1064"><figcaption>El prototipo: casas en forma de caja, murales generados por código y una ciudad genérica.</figcaption></figure>
+    <figure><span class="tag after">Después</span><img src="img/game/pueblo.jpg" alt="Versión final: calle principal de un pueblo de adobe con cerros de colores" width="1280" height="1008"><figcaption>La versión actual: calle principal de un pueblo de adobe, con los cerros de la Quebrada disolviendo la distancia.</figcaption></figure>
+  </div>
+  <dl class="facts">
+    <div><dt>Casas de adobe</dt><dd><b>1.368</b>en damero y puestos, dibujadas en 6 draw calls</dd></div>
+    <div><dt>Imágenes generadas</dt><dd><b>52</b>40 con Nano Banana Pro y 12 con modelos abiertos</dd></div>
+    <div><dt>Costo del arte</dt><dd><b>≈1.444</b>créditos de Comfy Cloud más ≈457 s de GPU</dd></div>
+    <div><dt>Rondas de iteración</dt><dd><b>4</b>en un día, guiadas por feedback visual</dd></div>
+  </dl>
+</section>
+
+<section>
+  <span class="eyebrow">Los reportes</span>
+  <h2>Dos lecturas del mismo proceso</h2>
+  <div class="cards">
+    <a href="escenarios.html"><img src="img/game/techos.jpg" alt="Vista elevada de los techos planos de barro del pueblo" width="1280" height="1008" loading="lazy"><b>Cómo se construyeron los escenarios</b><span>Del terreno plano a un pueblo en damero: geometría, trama urbana, niebla que se disuelve en la pintura y el panorama de fondo.</span></a>
+    <a href="assets.html"><img src="img/jujuy/j3-front.jpg" alt="Fachada de adobe ocre con portón de cardón generada con IA" width="420" height="236" loading="lazy"><b>Cómo se crearon los assets con IA</b><span>El pipeline en ComfyUI con Nano Banana Pro, la comparativa con modelos abiertos, los prompts, el posproceso y los costos.</span></a>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Recorrido del proceso</span>
+  <h2>Cuatro rondas</h2>
+  <ol class="steps">
+    <li><div><b>Fachadas pintadas.</b> Las cajas pasan a tener una piel pintada por cara, generada en ComfyUI con el panorama y el mural del juego como referencias de estilo.</div></li>
+    <li><div><b>Variantes y comparativa.</b> Ocho casas y el entorno con Nano Banana Pro; Flux.2 Dev, Qwen-Image-Edit y Z-Image Turbo evaluados con el mismo encargo.</div></li>
+    <li><div><b>Diagnóstico.</b> Una niebla que se disuelve en el panorama, referencias de juegos con ciudades de cerro y una conclusión: el problema era la geometría, no las texturas.</div></li>
+    <li><div><b>Jujuy.</b> Un pueblo en damero con plaza e iglesia, pircas y cardones, y un panorama nuevo de la Quebrada que guía el estilo de todo lo demás.</div></li>
+  </ol>
+</section>
+
+<section>
+  <div class="grid3">
+    <figure><img src="img/game/cuesta.jpg" alt="La cuesta con pircas, un puesto de adobe y álamos" width="1280" height="1008" loading="lazy"><figcaption>La cuesta.</figcaption></figure>
+    <figure><img src="img/game/plaza.jpg" alt="Llegada a la plaza con el campanario al fondo" width="1280" height="1008" loading="lazy"><figcaption>Llegada a la plaza.</figcaption></figure>
+    <figure><img src="img/jujuy/panorama.jpg" alt="Panorama pintado de la Quebrada de Humahuaca" width="1600" height="679" loading="lazy"><figcaption>El panorama que ancla el estilo.</figcaption></figure>
+  </div>
+</section>
+
+<footer>
+  <span>Deriva es open source: código bajo licencia MIT y arte bajo CC BY 4.0 en <a href="https://github.com/meryboth/longboard">github.com/meryboth/longboard</a>.</span>
+  <span>Arte generado con Nano Banana Pro (Gemini 3 Pro Image) en Comfy Cloud, septiembre de 2026.</span>
+</footer>
+</div>
+</body>
+</html>

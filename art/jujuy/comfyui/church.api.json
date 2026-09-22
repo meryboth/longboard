@@ -1,0 +1,86 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "2b910e004211af4efc5d2d9e69196f141d9515943793ea99992046247a08761c.png"
+  },
+  "_meta": {
+   "title": "Ref: panorama Quebrada"
+  }
+ },
+ "10": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "Paint the FRONT facade of a small colonial Andean adobe church of the Quebrada de Humahuaca (like the churches of Purmamarca or Uquía): thick whitewashed adobe, a double wooden door of cardón wood under a round stone arch, a small round window above it, crowned by a straight white parapet with a simple cross in the middle. The facade is 10 m wide and 7 m tall.\nFORMAT: a GAME TEXTURE for a 3D box: a perfectly flat orthographic elevation of ONE wall seen dead-on, zero perspective. The wall fills the ENTIRE frame edge to edge: left and right edges are the building corners, the bottom edge is the ground line with a low worn plinth, the top edge is the top of the parapet of a flat mud roof. FORBIDDEN: sky, roof seen from above, ground, street, people, animals, text, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even soft light, subtle ambient occlusion in the openings.\nSTYLE: match the hand-painted gouache technique, light and palette of the reference painting of the Quebrada de Humahuaca (Jujuy, Argentina): warm golden afternoon light, soft visible brush texture, earthy adobe tones.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 4201,
+   "aspect_ratio": "4:3",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "1",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_church_front"
+  }
+ },
+ "20": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "The reference image is the approved FRONT facade of this church. Paint the SIDE wall of its nave, 16 m long and 7 m tall: identical whitewashed adobe and painting style, three sloped buttresses painted flat, two small high windows, stone plinth. No door.\nFORMAT: a GAME TEXTURE for a 3D box: a perfectly flat orthographic elevation of ONE wall seen dead-on, zero perspective. The wall fills the ENTIRE frame edge to edge: left and right edges are the building corners, the bottom edge is the ground line with a low worn plinth, the top edge is the top of the parapet of a flat mud roof. FORBIDDEN: sky, roof seen from above, ground, street, people, animals, text, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even soft light, subtle ambient occlusion in the openings.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 4202,
+   "aspect_ratio": "21:9",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "10",
+    0
+   ]
+  }
+ },
+ "21": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "20",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_church_side"
+  }
+ },
+ "30": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "The reference image is the approved FRONT facade of this church. Paint ONE face of its square adobe bell tower, 4.5 m wide and 8 m tall: identical whitewashed adobe and painting style, an arched belfry opening near the top with a bronze bell inside, plain wall below.\nFORMAT: a GAME TEXTURE for a 3D box: a perfectly flat orthographic elevation of ONE wall seen dead-on, zero perspective. The wall fills the ENTIRE frame edge to edge: left and right edges are the building corners, the bottom edge is the ground line with a low worn plinth, the top edge is the top of the parapet of a flat mud roof. FORBIDDEN: sky, roof seen from above, ground, street, people, animals, text, signs, numbers, plants in front of the wall, borders, cast shadows from outside objects. Even soft light, subtle ambient occlusion in the openings.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 4203,
+   "aspect_ratio": "9:16",
+   "resolution": "1K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "10",
+    0
+   ]
+  }
+ },
+ "31": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "30",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_church_tower"
+  }
+ }
+}

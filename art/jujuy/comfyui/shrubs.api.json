@@ -1,0 +1,87 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "2b910e004211af4efc5d2d9e69196f141d9515943793ea99992046247a08761c.png"
+  },
+  "_meta": {
+   "title": "Ref: panorama Quebrada"
+  }
+ },
+ "10": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "A 2x2 sprite sheet for a 2.5D game set in Jujuy: top-left a rounded grey-green tola shrub, top-right a tuft of dry golden ichu grass, bottom-left a cluster of reddish-ochre boulders, bottom-right a small young cardón cactus. Each element is completely isolated on a flat uniform pure magenta (#FF00FF) background, centred in its own quadrant with generous margin, fully visible from base to top, seen from the side at eye level. No ground plane, no shadow on the background, no text, no borders. STYLE: match the hand-painted gouache technique, light and palette of the reference painting of the Quebrada de Humahuaca (Jujuy, Argentina): warm golden afternoon light, soft visible brush texture, earthy adobe tones.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 4701,
+   "aspect_ratio": "1:1",
+   "resolution": "2K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "1",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_shrubs"
+  }
+ },
+ "20": {
+  "class_type": "LoadBackgroundRemovalModel",
+  "inputs": {
+   "bg_removal_name": "birefnet.safetensors"
+  }
+ },
+ "21": {
+  "class_type": "RemoveBackground",
+  "inputs": {
+   "bg_removal_model": [
+    "20",
+    0
+   ],
+   "image": [
+    "10",
+    0
+   ]
+  }
+ },
+ "22": {
+  "class_type": "InvertMask",
+  "inputs": {
+   "mask": [
+    "21",
+    0
+   ]
+  }
+ },
+ "23": {
+  "class_type": "JoinImageWithAlpha",
+  "inputs": {
+   "image": [
+    "10",
+    0
+   ],
+   "alpha": [
+    "22",
+    0
+   ]
+  }
+ },
+ "24": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "23",
+    0
+   ],
+   "filename_prefix": "deriva/jujuy_shrubs_cutout"
+  }
+ }
+}

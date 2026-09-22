@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {makePickupLayout,newCollection,collectBetween} from '../dist/collection-logic.js';
+const items=makePickupLayout(2400,[{s:112}]);
+assert.ok(items.every(i=>Math.abs(i.s-112)>=7&&Math.abs(i.lane)<=3.2));
+const state=newCollection();
+assert.equal(collectBetween(state,items,0,30,0,0)[0].points,100);
+assert.equal(collectBetween(state,items,0,30,0,0).length,0);
+assert.equal(collectBetween(state,items,30,50,0,0)[0].points,200);
+assert.equal(collectBetween(state,items,50,70,0,0)[0].points,400);
+assert.deepEqual(state.counts,{pancho:1,disco:1,sticker:1});assert.equal(state.points,700);assert.equal(state.sets,1);
+assert.equal(collectBetween(newCollection(),items,0,30,3,3).length,0);
+assert.equal(collectBetween(newCollection(),[{id:1,type:'pancho',s:50,lane:0}],40,60,-2,2).length,1);
+assert.equal(newCollection().collected.size,0);
+console.log('Collection: pickup, missed lane, swept collision, duplicate, combo and reset checks passed');

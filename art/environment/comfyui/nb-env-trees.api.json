@@ -1,0 +1,106 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "fcf7faee0ce3266e4dbf08df86a02d06652326f7fdc721fff1d7a6aa8b0c7454.png"
+  }
+ },
+ "2": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "dafbaafa56bfbec06371db651a9fe1ba0b070331d1f95e4c06dc05d3277493d6.png"
+  }
+ },
+ "3": {
+  "class_type": "BatchImagesNode",
+  "inputs": {
+   "images.image0": [
+    "1",
+    0
+   ],
+   "images.image1": [
+    "2",
+    0
+   ]
+  }
+ },
+ "10": {
+  "class_type": "GeminiImage2Node",
+  "inputs": {
+   "prompt": "A 2x2 sprite sheet of four different trees for a 2.5D game: top-left a tall slender Italian cypress, top-right a Chilean palm tree, bottom-left a eucalyptus tree with pale trunk, bottom-right a rounded jacaranda tree in lilac bloom. Each element is completely isolated on a flat, uniform, pure magenta (#FF00FF) background, centred in its own quadrant with generous empty margin, fully visible from base to top, seen from the side at eye level. No ground plane, no cast shadow on the background, no text, no borders, no overlapping between quadrants. Match the painting style and palette of the reference images (painted city panorama and street mural from our game): warm golden-hour painterly gouache, soft brush texture, teal, olive, ochre, terracotta and cream.",
+   "model": "gemini-3-pro-image-preview",
+   "seed": 2201,
+   "aspect_ratio": "1:1",
+   "resolution": "2K",
+   "response_modalities": "IMAGE",
+   "images": [
+    "3",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "Nano Banana Pro · trees"
+  }
+ },
+ "11": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "filename_prefix": "deriva/env_trees"
+  }
+ },
+ "20": {
+  "class_type": "LoadBackgroundRemovalModel",
+  "inputs": {
+   "bg_removal_name": "birefnet.safetensors"
+  }
+ },
+ "21": {
+  "class_type": "RemoveBackground",
+  "inputs": {
+   "bg_removal_model": [
+    "20",
+    0
+   ],
+   "image": [
+    "10",
+    0
+   ]
+  }
+ },
+ "22": {
+  "class_type": "InvertMask",
+  "inputs": {
+   "mask": [
+    "21",
+    0
+   ]
+  }
+ },
+ "23": {
+  "class_type": "JoinImageWithAlpha",
+  "inputs": {
+   "image": [
+    "10",
+    0
+   ],
+   "alpha": [
+    "22",
+    0
+   ]
+  }
+ },
+ "24": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "23",
+    0
+   ],
+   "filename_prefix": "deriva/env_trees_cutout"
+  }
+ }
+}
