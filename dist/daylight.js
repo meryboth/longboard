@@ -52,7 +52,8 @@ export function createDaylight({mount,onChange}){
   <form id="place-form"><input id="place-query" type="search" placeholder="Buscar ciudad" autocomplete="off" aria-label="Buscar ciudad"><button class="glass" type="submit">Buscar</button></form>
   <ul id="place-results"></ul><button class="glass place-geo" id="place-geo" type="button">Usar mi ubicación</button><p id="place-status" class="place-status" role="status"></p></div></div>`);
  const $=id=>document.getElementById(id),panel=$('place-panel'),toggle=$('place-toggle');
- const open=v=>{panel.hidden=!v;toggle.setAttribute('aria-expanded',String(v));if(v)$('place-query').focus();};
+ // El botín se esconde mientras el panel está abierto: en el teléfono ocupan el mismo lugar.
+ const open=v=>{panel.hidden=!v;toggle.setAttribute('aria-expanded',String(v));document.body.classList.toggle('place-open',v);if(v)$('place-query').focus();};
  toggle.onclick=()=>open(panel.hidden);
  // Typing a city must not steer, brake or pause the board.
  panel.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'){open(false);toggle.focus();}});

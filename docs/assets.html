@@ -158,6 +158,22 @@ painting of the Quebrada de Humahuaca (Jujuy, Argentina).</code></pre>
 </section>
 
 <section>
+  <span class="eyebrow">Ruta</span>
+  <h2>Llamas en lugar de conos</h2>
+  <p>Los conos de la ruta pasaron a ser llamas que la cruzan. Salen del campo por un hueco en la pirca, o de la vereda en el pueblo, y arrancan apuntando al rider: cruzan su línea justo antes de que llegue, así que para esquivarlas hay que girar, frenar o acelerar. Una de cada tres, marrón, cruza al trote y deja menos margen.</p>
+  <figure><div class="checker"><img src="img/animals/llama-frames.webp" alt="Dos cuadros de caminata de una llama de perfil con pompones de colores en las orejas" width="920" height="512" loading="lazy"></div><figcaption>Dos cuadros de caminata. El segundo es una edición del primero, para que sean la misma llama; la pose del rider entra como referencia de estilo.</figcaption></figure>
+  <div class="pair">
+    <figure><img src="img/animals/llama-pirca.jpg" alt="Vista elevada de un cruce con las dos pircas abiertas y una llama esperando en el campo" width="1100" height="864" loading="lazy"><figcaption>En cada cruce las pircas se abren, así la llama no atraviesa el muro.</figcaption></figure>
+    <figure><img src="img/animals/llama-pueblo.jpg" alt="Llama cruzando la calle principal del pueblo entre casas de adobe" width="1100" height="864" loading="lazy"><figcaption>En el pueblo cruza desde la vereda.</figcaption></figure>
+  </div>
+  <div class="notes">
+    <p class="note bad"><b>Dos cuadros se veían rígidos.</b> Alternar solo dos poses daba una llama de cartón.</p>
+    <p class="note"><b>Arreglo en el juego, sin regenerar.</b> Un shader inclina las patas desde la línea de la panza, delanteras y traseras en fases opuestas, entre los dos cuadros pintados. El ciclo avanza con el terreno recorrido, así al trotar el paso se acelera solo.</p>
+  </div>
+  <p class="cap">Detalle en <code>art/animals/PIPELINE.md</code>. Costo: 2 imágenes de Nano Banana Pro, ≈71 créditos.</p>
+</section>
+
+<section>
   <span class="eyebrow">Comparativa</span>
   <h2>Nano Banana Pro contra tres modelos abiertos</h2>
   <p>Mismo encargo, mismas referencias y mismas semillas, con dos variantes de la etapa Valparaíso. Los modelos abiertos corrieron en la misma cuenta de Comfy Cloud, con sus ajustes recomendados.</p>
@@ -250,8 +266,9 @@ geq=r='r(X,Y)-if(gt(min(r(X,Y),b(X,Y))-g(X,Y),50),min(r(X,Y),b(X,Y))-g(X,Y),0)':
       <tr><th>4</th><td>6 casas, iglesia, suelo, calle, pirca, vegetación</td><td>Nano Banana Pro + BiRefNet</td><td class="num">20</td><td class="num">706</td><td class="num">71 s</td><td>Márgenes en 3 casas; algarrobo cortado.</td></tr>
       <tr><th>5</th><td>5 riders × 4 imágenes, 6 tablas</td><td>Nano Banana Pro + BiRefNet</td><td class="num">26</td><td class="num">≈923</td><td class="num">≈713 s</td><td>Carving menos inclinado que la referencia; manchas en el borde de una tabla.</td></tr>
       <tr><th>5</th><td>Poses v2 de Killa y Nia (edición sobre la pose original)</td><td>Nano Banana Pro + BiRefNet</td><td class="num">8</td><td class="num">≈284</td><td class="num">—</td><td>La mochila de Nia aparecía en una sola pose: se regeneraron dos.</td></tr>
+      <tr><th>6</th><td>Llama: dos cuadros de caminata</td><td>Nano Banana Pro + BiRefNet</td><td class="num">2</td><td class="num">≈71</td><td class="num">—</td><td>Nada en la imagen; la rigidez de la caminata se resolvió con un shader.</td></tr>
     </tbody>
-    <tfoot><tr><th>Total</th><td></td><td></td><td class="num">86</td><td class="num">≈2.651</td><td class="num">≈1.170 s</td><td></td></tr></tfoot>
+    <tfoot><tr><th>Total</th><td></td><td></td><td class="num">88</td><td class="num">≈2.722</td><td class="num">≈1.170 s</td><td></td></tr></tfoot>
   </table>
   </div>
   <p class="cap">Datos del registro de facturación de Comfy Cloud. Nano Banana Pro costó ≈35,4 créditos por imagen a 1K y 2K, y 62 a 4K. GPU: RTX Pro 6000.</p>

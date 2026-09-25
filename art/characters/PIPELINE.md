@@ -67,14 +67,13 @@ El prompt pide reemplazar solo la identidad y mantener exactos la postura, los p
 2. Correr `node art/comfyui-riders.mjs`. Genera el workflow y lo agrega a `art/characters/comfyui/batch.json`.
 3. Cargar el workflow en ComfyUI. Si es otra cuenta, volver a subir las tres referencias y actualizar los nombres de archivo en los `LoadImage`. Después, ejecutar.
 4. Exportar los cuatro recortes a WebP en `dist/assets/riders/`:
-   - **Retrato:** se recorta al contorno del alfa con un margen de 12 px.
+   - **Retrato:** se recorta al contorno del alfa con un margen de 12 px, usando `art/export-sprite.mjs`.
    - **Poses:** quedan en el cuadro completo, para que las tres compartan encuadre.
    ```bash
-   # contorno del alfa (devuelve crop=w:h:x:y)
-   ffmpeg -i portrait_cutout.png -vf "alphaextract,cropdetect=limit=24:round=2:skip=0:reset=0" -f null - 2>&1 | grep -o 'crop=[0-9:]*' | tail -1
-   ffmpeg -i portrait_cutout.png -vf "crop=W:H:X:Y,scale=-2:900" -c:v libwebp -quality 88 dist/assets/riders/<id>-portrait.webp
+   node art/export-sprite.mjs portrait_cutout.png dist/assets/riders/<id>-portrait.webp --height 900 --pad 12
    ffmpeg -i neutral_cutout.png -c:v libwebp -quality 88 dist/assets/riders/<id>-neutral.webp
    ```
+   No usar `cropdetect` de ffmpeg para esto: está pensado para video y con una sola imagen devolvió rectángulos equivocados. Cortó cabezas y pies en los cinco retratos del primer lote, y la nariz y la cola de dos tablas. `export-sprite.mjs` lee el alfa píxel por píxel.
 5. Sumar el personaje a `RIDERS` en `dist/garage.js`.
 
 Costo: 4 imágenes de Nano Banana Pro (≈141 créditos) más ≈40 s de GPU de BiRefNet por personaje.

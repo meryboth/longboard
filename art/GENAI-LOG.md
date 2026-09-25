@@ -149,3 +149,22 @@ Se capturó el canvas del juego a través de un servidor temporal que servía `d
   - **Detalle perdido:** la mochila de Nia apareció en una sola pose. Se regeneraron dos con el detalle explícito en el prompt ("KEEP").
   - **Costo:** 8 imágenes, ≈284 créditos.
   - **Lección:** para variaciones de un personaje en una pose fija, editar la imagen de referencia es mucho más fiel que pedir que la copie. Queda como método recomendado en `art/characters/PIPELINE.md` ("Método v2"), con la función `repose()` en `art/comfyui-riders.mjs`.
+
+## Ronda 6 — Llamas en la ruta (24-09-2026)
+
+- **Pedido:** reemplazar los conos por llamas que crucen la ruta, porque estamos en Jujuy.
+- **Pipeline:** `art/comfyui-animals.mjs`, documentado en `art/animals/PIPELINE.md`.
+  - Dos cuadros de caminata de perfil. El segundo es una edición del primero, para que sean la misma llama.
+  - La pose del rider original entra como referencia de estilo.
+  - Recorte con BiRefNet.
+- **Resultado:**
+  - A la primera: misma línea de tinta y sombreado que los riders, lana crema y marrón, y pompones de colores en las orejas por la señalada andina.
+  - Los dos cuadros son el mismo animal con las patas en fases distintas.
+- **Qué faltaba:** alternar solo dos cuadros se veía rígido. Se resolvió en el juego, no regenerando: un shader inclina las patas delanteras y traseras en fases opuestas entre los dos cuadros pintados.
+- **Costo:** 2 imágenes de Nano Banana Pro a 1K, ≈71 créditos.
+- **Recortes corregidos (25-09-2026):**
+  - **Síntoma:** la llama tenía la "cara cortada" cuando la cámara se acercaba.
+  - **Causa:** el recorte al contorno se hacía con `cropdetect` de ffmpeg, pensado para video. Con una sola imagen devolvió rectángulos equivocados.
+  - **Alcance:** además de la llama, estaban cortados los 5 retratos del garage (cabeza y pies) y las tablas Cardonal y Cóndor (nariz y cola), que definen la silueta del deck 3D.
+  - **Arreglo:** se re-exportaron todos con `art/export-sprite.mjs`, que lee el alfa píxel por píxel. Se verificó que ningún asset tenga píxeles opacos en el borde.
+  - **Costo:** ninguno, porque se partió de los originales.

@@ -1,6 +1,6 @@
 # Deriva
 
-Juego de longboard para el navegador, hecho con Three.js. Son 2,4 km de bajada inspirados en la Quebrada de Humahuaca (Jujuy, Argentina): una cuesta con pircas y cardones y un pueblo de adobe en damero, con plaza e iglesia. Tiene carving, conos y coleccionables.
+Juego de longboard para el navegador, hecho con Three.js. Son 2,4 km de bajada inspirados en la Quebrada de Humahuaca (Jujuy, Argentina): una cuesta con pircas y cardones y un pueblo de adobe en damero, con plaza e iglesia. Tiene carving, llamas que cruzan la ruta y coleccionables: panchos, discos y stickers.
 
 - **Garage:** elegís entre cinco riders y seis tablas.
 - **Luz real:** sigue la hora del lugar que elijas, y de noche se encienden los faroles.
@@ -39,7 +39,7 @@ Parámetros de URL para revisar el juego:
 - Flecha arriba o W: impulso.
 - Espacio, flecha abajo o S: slide/freno.
 - P o Escape: pausa. R: reiniciar.
-- En pantallas chicas hay controles táctiles.
+- En pantallas táctiles aparecen los mandos: dirección a la izquierda, freno e impulso a la derecha. Ver [`UI.md`](UI.md).
 - Arriba a la derecha:
   - **Ubicación:** muestra la hora del lugar; se puede buscar una ciudad o usar la ubicación del navegador.
   - **Garage (☻):** elegir rider y tabla.
@@ -72,6 +72,7 @@ La elección se guarda en el navegador y se aplica en vivo.
 | `dist/garage.js` | Pantallas de elección de rider y tabla. |
 | `dist/rider-poses.js` | Sprite del rider: poses, detección de los pies y animación. |
 | `dist/board.js` | Tabla 3D que se ubica bajo los pies del rider. |
+| `dist/llamas.js` | Llamas que cruzan la ruta: cruce, caminata animada y choque. |
 | `dist/daylight.js` | Elevación del sol según la hora y la ubicación, y widget de ubicación. |
 | `dist/streetlights.js` | Faroles instanciados con halo, luz sobre el asfalto y luces reales cerca del rider. |
 | `dist/town.js` | Pueblo en damero: manzanas, calles de tierra, plaza, iglesia y puestos rurales, todo instanciado. |
@@ -79,8 +80,10 @@ La elección se guarda en el navegador y se aplica en vivo.
 | `dist/walls.js` | Pircas junto a la ruta, cortadas donde empieza el pueblo. |
 | `dist/city-backdrop.js` | Panorama de fondo y niebla que se disuelve en él. |
 | `dist/assets/` | Texturas y sprites optimizados (JPG y WebP): escenario, riders y tablas. |
-| `art/` | Workflows de ComfyUI en formato API, sus generadores (`comfyui-gen.mjs`, `comfyui-jujuy.mjs` y `comfyui-riders.mjs`) y la bitácora. |
+| `art/` | Workflows de ComfyUI en formato API, sus generadores (`comfyui-gen.mjs`, `comfyui-jujuy.mjs`, `comfyui-riders.mjs` y `comfyui-animals.mjs`) y la bitácora. |
 | `art/characters/PIPELINE.md` | Cómo crear un rider nuevo, del workflow al juego. |
+| `art/animals/PIPELINE.md` | Cómo sumar un animal que cruce la ruta. |
+| `UI.md` | La capa de interfaz en el teléfono: mandos, header y pantallas. |
 | `docs/` | Reportes del caso de estudio. |
 | `tests/` | Pruebas de la lógica de coleccionables (`node tests/collection.test.mjs`). |
 
